@@ -1,0 +1,9 @@
+Rscript p_spearman.r -i test.txt -n 3 --s1 2 --s2 8 -p 1 -o ./test_result.txt
+
+-i : input
+-n : sample number
+--s1 : start position 1
+--s2 : start position 2
+-p : parallel cpu number
+-o : output path
+

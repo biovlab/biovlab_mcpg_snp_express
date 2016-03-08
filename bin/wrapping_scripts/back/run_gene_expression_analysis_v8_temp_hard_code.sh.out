@@ -1,0 +1,797 @@
+./../../env.sh: line 75: UID: readonly variable
+[INFO] Currently processing lu and baa
+[INFO] Input1 sample lists are : /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_1_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_7_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_8_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_3_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_2_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_7_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_3_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_8_export.txt.CEL
+[INFO] Input2 sample lists are : /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_8_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_2_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_5_export.txt.CEL
+[INFO] sample_class_list : lu lu lu lu lu lu lu lu lu lu lu lu lu baa baa baa baa baa baa baa
+Loading required package: BiocGenerics
+Loading required package: methods
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, as.vector, cbind, colnames,
+    duplicated, eval, evalq, Filter, Find, get, intersect, is.unsorted,
+    lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, Position, rank, rbind, Reduce, rep.int, rownames,
+    sapply, setdiff, sort, table, tapply, union, unique, unlist
+
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘limma’
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    plotMA
+
+Loading required package: AnnotationDbi
+ [1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_1_export.txt.CEL"
+ [2] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_7_export.txt.CEL"
+ [3] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_8_export.txt.CEL"
+ [4] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_5_export.txt.CEL"
+ [5] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_6_export.txt.CEL"
+ [6] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_3_export.txt.CEL"
+ [7] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_4_export.txt.CEL"
+ [8] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_2_export.txt.CEL"
+ [9] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_5_export.txt.CEL"
+[10] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_7_export.txt.CEL"
+[11] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_3_export.txt.CEL"
+[12] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_4_export.txt.CEL"
+[13] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_8_export.txt.CEL"
+[14] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_5_export.txt.CEL"
+[15] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_6_export.txt.CEL"
+[16] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_8_export.txt.CEL"
+[17] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_4_export.txt.CEL"
+[18] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_2_export.txt.CEL"
+[19] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_6_export.txt.CEL"
+[20] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_5_export.txt.CEL"
+[INFO] Data set
+
+AffyBatch object
+size of arrays=712x712 features (25 kb)
+cdf=HG-U133A (22283 affyids)
+number of samples=20
+number of genes=22283
+annotation=hgu133a
+notes=
+Background correcting
+Normalizing
+Calculating Expression
+[INFO] eset
+ExpressionSet (storageMode: lockedEnvironment)
+assayData: 22283 features, 20 samples 
+  element names: exprs 
+protocolData
+  sampleNames: 100730_s_1_export.txt.CEL 100730_s_7_export.txt.CEL ...
+    100908_s_5_export.txt.CEL (20 total)
+  varLabels: ScanDate
+  varMetadata: labelDescription
+phenoData
+  sampleNames: 100730_s_1_export.txt.CEL 100730_s_7_export.txt.CEL ...
+    100908_s_5_export.txt.CEL (20 total)
+  varLabels: sample
+  varMetadata: labelDescription
+featureData: none
+experimentData: use 'experimentData(object)'
+Annotation: hgu133a 
+[INFO] eset sample names
+ [1] "100730_s_1_export.txt.CEL" "100730_s_7_export.txt.CEL"
+ [3] "100730_s_8_export.txt.CEL" "100803_s_5_export.txt.CEL"
+ [5] "100803_s_6_export.txt.CEL" "100812_s_3_export.txt.CEL"
+ [7] "100812_s_4_export.txt.CEL" "100824_s_2_export.txt.CEL"
+ [9] "100831_s_5_export.txt.CEL" "100902_s_7_export.txt.CEL"
+[11] "100908_s_3_export.txt.CEL" "100908_s_4_export.txt.CEL"
+[13] "100908_s_8_export.txt.CEL" "100730_s_5_export.txt.CEL"
+[15] "100831_s_6_export.txt.CEL" "100831_s_8_export.txt.CEL"
+[17] "100730_s_4_export.txt.CEL" "100812_s_2_export.txt.CEL"
+[19] "100730_s_6_export.txt.CEL" "100908_s_5_export.txt.CEL"
+[INFO] mydb
+[1] "hgu133a.db"
+Loading required package: org.Hs.eg.db
+Loading required package: DBI
+
+
+[INFO] Chip Platform: [1] "hgu133a"
+[INFO] design
+   factor(sample_num_list)baa factor(sample_num_list)lu
+1                           0                         1
+2                           0                         1
+3                           0                         1
+4                           0                         1
+5                           0                         1
+6                           0                         1
+7                           0                         1
+8                           0                         1
+9                           0                         1
+10                          0                         1
+11                          0                         1
+12                          0                         1
+13                          0                         1
+14                          1                         0
+15                          1                         0
+16                          1                         0
+17                          1                         0
+18                          1                         0
+19                          1                         0
+20                          1                         0
+attr(,"assign")
+[1] 1 1
+attr(,"contrasts")
+attr(,"contrasts")$`factor(sample_num_list)`
+[1] "contr.treatment"
+
+   group1 group2
+1       0      1
+2       0      1
+3       0      1
+4       0      1
+5       0      1
+6       0      1
+7       0      1
+8       0      1
+9       0      1
+10      0      1
+11      0      1
+12      0      1
+13      0      1
+14      1      0
+15      1      0
+16      1      0
+17      1      0
+18      1      0
+19      1      0
+20      1      0
+attr(,"assign")
+[1] 1 1
+attr(,"contrasts")
+attr(,"contrasts")$`factor(sample_num_list)`
+[1] "contr.treatment"
+
+[INFO] fit
+An object of class "MArrayLM"
+$coefficients
+            group1   group2
+1007_s_at 9.705266 9.711929
+1053_at   6.836581 6.757166
+117_at    5.560312 5.682206
+121_at    7.864943 7.870017
+1255_g_at 3.430165 3.394535
+22278 more rows ...
+
+$rank
+[1] 2
+
+$assign
+[1] 1 1
+
+$qr
+$qr
+     group1     group2
+1 -2.645751  0.0000000
+2  0.000000 -3.6055513
+3  0.000000  0.2773501
+4  0.000000  0.2773501
+5  0.000000  0.2773501
+15 more rows ...
+
+$qraux
+[1] 1.00000 1.27735
+
+$pivot
+[1] 1 2
+
+$tol
+[1] 1e-07
+
+$rank
+[1] 2
+
+
+$df.residual
+[1] 18 18 18 18 18
+22278 more elements ...
+
+$sigma
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+0.4739057 0.4386205 0.1379760 0.1620065 0.1604757 
+22278 more elements ...
+
+$cov.coefficients
+          group1     group2
+group1 0.1428571 0.00000000
+group2 0.0000000 0.07692308
+
+$stdev.unscaled
+             group1    group2
+1007_s_at 0.3779645 0.2773501
+1053_at   0.3779645 0.2773501
+117_at    0.3779645 0.2773501
+121_at    0.3779645 0.2773501
+1255_g_at 0.3779645 0.2773501
+22278 more rows ...
+
+$pivot
+[1] 1 2
+
+$genes
+                 ID Symbol
+1007_s_at 1007_s_at   <NA>
+1053_at     1053_at   RFC2
+117_at       117_at  HSPA6
+121_at       121_at   PAX8
+1255_g_at 1255_g_at GUCA1A
+22278 more rows ...
+
+$Amean
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+ 9.709597  6.784961  5.639543  7.868241  3.407006 
+22278 more elements ...
+
+$method
+[1] "ls"
+
+$design
+  group1 group2
+1      0      1
+2      0      1
+3      0      1
+4      0      1
+5      0      1
+15 more rows ...
+
+[INFO] Store result to files
+TestResults matrix
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+        0         0         0         0         0 
+22278 more rows ...
+[INFO] Create vennDiagram
+null device 
+          1 
+[INFO] Currently processing lu and bab
+[INFO] Input1 sample lists are : /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_1_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_7_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_8_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_3_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_2_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_7_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_3_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_8_export.txt.CEL
+[INFO] Input2 sample lists are : /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_2_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_1_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_3_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_7_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100910_s_4_export.txt.CEL
+[INFO] sample_class_list : lu lu lu lu lu lu lu lu lu lu lu lu lu bab bab bab bab bab bab bab bab bab bab
+Loading required package: BiocGenerics
+Loading required package: methods
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, as.vector, cbind, colnames,
+    duplicated, eval, evalq, Filter, Find, get, intersect, is.unsorted,
+    lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, Position, rank, rbind, Reduce, rep.int, rownames,
+    sapply, setdiff, sort, table, tapply, union, unique, unlist
+
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘limma’
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    plotMA
+
+Loading required package: AnnotationDbi
+ [1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_1_export.txt.CEL"
+ [2] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_7_export.txt.CEL"
+ [3] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_8_export.txt.CEL"
+ [4] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_5_export.txt.CEL"
+ [5] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_6_export.txt.CEL"
+ [6] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_3_export.txt.CEL"
+ [7] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_4_export.txt.CEL"
+ [8] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_2_export.txt.CEL"
+ [9] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_5_export.txt.CEL"
+[10] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_7_export.txt.CEL"
+[11] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_3_export.txt.CEL"
+[12] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_4_export.txt.CEL"
+[13] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_8_export.txt.CEL"
+[14] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_2_export.txt.CEL"
+[15] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_1_export.txt.CEL"
+[16] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_3_export.txt.CEL"
+[17] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_7_export.txt.CEL"
+[18] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_5_export.txt.CEL"
+[19] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_4_export.txt.CEL"
+[20] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_4_export.txt.CEL"
+[21] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_6_export.txt.CEL"
+[22] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_6_export.txt.CEL"
+[23] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100910_s_4_export.txt.CEL"
+[INFO] Data set
+
+AffyBatch object
+size of arrays=712x712 features (26 kb)
+cdf=HG-U133A (22283 affyids)
+number of samples=23
+number of genes=22283
+annotation=hgu133a
+notes=
+Background correcting
+Normalizing
+Calculating Expression
+[INFO] eset
+ExpressionSet (storageMode: lockedEnvironment)
+assayData: 22283 features, 23 samples 
+  element names: exprs 
+protocolData
+  sampleNames: 100730_s_1_export.txt.CEL 100730_s_7_export.txt.CEL ...
+    100910_s_4_export.txt.CEL (23 total)
+  varLabels: ScanDate
+  varMetadata: labelDescription
+phenoData
+  sampleNames: 100730_s_1_export.txt.CEL 100730_s_7_export.txt.CEL ...
+    100910_s_4_export.txt.CEL (23 total)
+  varLabels: sample
+  varMetadata: labelDescription
+featureData: none
+experimentData: use 'experimentData(object)'
+Annotation: hgu133a 
+[INFO] eset sample names
+ [1] "100730_s_1_export.txt.CEL" "100730_s_7_export.txt.CEL"
+ [3] "100730_s_8_export.txt.CEL" "100803_s_5_export.txt.CEL"
+ [5] "100803_s_6_export.txt.CEL" "100812_s_3_export.txt.CEL"
+ [7] "100812_s_4_export.txt.CEL" "100824_s_2_export.txt.CEL"
+ [9] "100831_s_5_export.txt.CEL" "100902_s_7_export.txt.CEL"
+[11] "100908_s_3_export.txt.CEL" "100908_s_4_export.txt.CEL"
+[13] "100908_s_8_export.txt.CEL" "100730_s_2_export.txt.CEL"
+[15] "100812_s_1_export.txt.CEL" "100803_s_3_export.txt.CEL"
+[17] "100803_s_7_export.txt.CEL" "100812_s_5_export.txt.CEL"
+[19] "100824_s_4_export.txt.CEL" "100831_s_4_export.txt.CEL"
+[21] "100902_s_6_export.txt.CEL" "100908_s_6_export.txt.CEL"
+[23] "100910_s_4_export.txt.CEL"
+[INFO] mydb
+[1] "hgu133a.db"
+Loading required package: org.Hs.eg.db
+Loading required package: DBI
+
+
+[INFO] Chip Platform: [1] "hgu133a"
+[INFO] design
+   factor(sample_num_list)bab factor(sample_num_list)lu
+1                           0                         1
+2                           0                         1
+3                           0                         1
+4                           0                         1
+5                           0                         1
+6                           0                         1
+7                           0                         1
+8                           0                         1
+9                           0                         1
+10                          0                         1
+11                          0                         1
+12                          0                         1
+13                          0                         1
+14                          1                         0
+15                          1                         0
+16                          1                         0
+17                          1                         0
+18                          1                         0
+19                          1                         0
+20                          1                         0
+21                          1                         0
+22                          1                         0
+23                          1                         0
+attr(,"assign")
+[1] 1 1
+attr(,"contrasts")
+attr(,"contrasts")$`factor(sample_num_list)`
+[1] "contr.treatment"
+
+   group1 group2
+1       0      1
+2       0      1
+3       0      1
+4       0      1
+5       0      1
+6       0      1
+7       0      1
+8       0      1
+9       0      1
+10      0      1
+11      0      1
+12      0      1
+13      0      1
+14      1      0
+15      1      0
+16      1      0
+17      1      0
+18      1      0
+19      1      0
+20      1      0
+21      1      0
+22      1      0
+23      1      0
+attr(,"assign")
+[1] 1 1
+attr(,"contrasts")
+attr(,"contrasts")$`factor(sample_num_list)`
+[1] "contr.treatment"
+
+[INFO] fit
+An object of class "MArrayLM"
+$coefficients
+            group1   group2
+1007_s_at 8.461461 9.823236
+1053_at   7.223648 6.791077
+117_at    5.544905 5.630435
+121_at    7.768305 7.825765
+1255_g_at 3.198588 3.303603
+22278 more rows ...
+
+$rank
+[1] 2
+
+$assign
+[1] 1 1
+
+$qr
+$qr
+     group1     group2
+1 -3.162278  0.0000000
+2  0.000000 -3.6055513
+3  0.000000  0.2773501
+4  0.000000  0.2773501
+5  0.000000  0.2773501
+18 more rows ...
+
+$qraux
+[1] 1.00000 1.27735
+
+$pivot
+[1] 1 2
+
+$tol
+[1] 1e-07
+
+$rank
+[1] 2
+
+
+$df.residual
+[1] 21 21 21 21 21
+22278 more elements ...
+
+$sigma
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+0.6948274 0.4749467 0.1349367 0.1728463 0.1233074 
+22278 more elements ...
+
+$cov.coefficients
+       group1     group2
+group1    0.1 0.00000000
+group2    0.0 0.07692308
+
+$stdev.unscaled
+             group1    group2
+1007_s_at 0.3162278 0.2773501
+1053_at   0.3162278 0.2773501
+117_at    0.3162278 0.2773501
+121_at    0.3162278 0.2773501
+1255_g_at 0.3162278 0.2773501
+22278 more rows ...
+
+$pivot
+[1] 1 2
+
+$genes
+                 ID Symbol
+1007_s_at 1007_s_at   <NA>
+1053_at     1053_at   RFC2
+117_at       117_at  HSPA6
+121_at       121_at   PAX8
+1255_g_at 1255_g_at GUCA1A
+22278 more rows ...
+
+$Amean
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+ 9.231160  6.979151  5.593248  7.800782  3.257944 
+22278 more elements ...
+
+$method
+[1] "ls"
+
+$design
+  group1 group2
+1      0      1
+2      0      1
+3      0      1
+4      0      1
+5      0      1
+18 more rows ...
+
+[INFO] Store result to files
+TestResults matrix
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+        1         0         0         0         0 
+22278 more rows ...
+[INFO] Create vennDiagram
+null device 
+          1 
+[INFO] Currently processing baa and bab
+[INFO] Input1 sample lists are : /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_8_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_2_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_5_export.txt.CEL
+[INFO] Input2 sample lists are : /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_2_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_1_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_3_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_7_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_5_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_4_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_6_export.txt.CEL /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100910_s_4_export.txt.CEL
+[INFO] sample_class_list : baa baa baa baa baa baa baa bab bab bab bab bab bab bab bab bab bab
+Loading required package: BiocGenerics
+Loading required package: methods
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, as.vector, cbind, colnames,
+    duplicated, eval, evalq, Filter, Find, get, intersect, is.unsorted,
+    lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, Position, rank, rbind, Reduce, rep.int, rownames,
+    sapply, setdiff, sort, table, tapply, union, unique, unlist
+
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘limma’
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    plotMA
+
+Loading required package: AnnotationDbi
+ [1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_5_export.txt.CEL"
+ [2] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_6_export.txt.CEL"
+ [3] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_8_export.txt.CEL"
+ [4] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_4_export.txt.CEL"
+ [5] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_2_export.txt.CEL"
+ [6] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_6_export.txt.CEL"
+ [7] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_5_export.txt.CEL"
+ [8] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100730_s_2_export.txt.CEL"
+ [9] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_1_export.txt.CEL"
+[10] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_3_export.txt.CEL"
+[11] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100803_s_7_export.txt.CEL"
+[12] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100812_s_5_export.txt.CEL"
+[13] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100824_s_4_export.txt.CEL"
+[14] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100831_s_4_export.txt.CEL"
+[15] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100902_s_6_export.txt.CEL"
+[16] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100908_s_6_export.txt.CEL"
+[17] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/icbp/gene_expression_array/100910_s_4_export.txt.CEL"
+[INFO] Data set
+
+AffyBatch object
+size of arrays=712x712 features (24 kb)
+cdf=HG-U133A (22283 affyids)
+number of samples=17
+number of genes=22283
+annotation=hgu133a
+notes=
+Background correcting
+Normalizing
+Calculating Expression
+[INFO] eset
+ExpressionSet (storageMode: lockedEnvironment)
+assayData: 22283 features, 17 samples 
+  element names: exprs 
+protocolData
+  sampleNames: 100730_s_5_export.txt.CEL 100831_s_6_export.txt.CEL ...
+    100910_s_4_export.txt.CEL (17 total)
+  varLabels: ScanDate
+  varMetadata: labelDescription
+phenoData
+  sampleNames: 100730_s_5_export.txt.CEL 100831_s_6_export.txt.CEL ...
+    100910_s_4_export.txt.CEL (17 total)
+  varLabels: sample
+  varMetadata: labelDescription
+featureData: none
+experimentData: use 'experimentData(object)'
+Annotation: hgu133a 
+[INFO] eset sample names
+ [1] "100730_s_5_export.txt.CEL" "100831_s_6_export.txt.CEL"
+ [3] "100831_s_8_export.txt.CEL" "100730_s_4_export.txt.CEL"
+ [5] "100812_s_2_export.txt.CEL" "100730_s_6_export.txt.CEL"
+ [7] "100908_s_5_export.txt.CEL" "100730_s_2_export.txt.CEL"
+ [9] "100812_s_1_export.txt.CEL" "100803_s_3_export.txt.CEL"
+[11] "100803_s_7_export.txt.CEL" "100812_s_5_export.txt.CEL"
+[13] "100824_s_4_export.txt.CEL" "100831_s_4_export.txt.CEL"
+[15] "100902_s_6_export.txt.CEL" "100908_s_6_export.txt.CEL"
+[17] "100910_s_4_export.txt.CEL"
+[INFO] mydb
+[1] "hgu133a.db"
+Loading required package: org.Hs.eg.db
+Loading required package: DBI
+
+
+[INFO] Chip Platform: [1] "hgu133a"
+[INFO] design
+   factor(sample_num_list)baa factor(sample_num_list)bab
+1                           1                          0
+2                           1                          0
+3                           1                          0
+4                           1                          0
+5                           1                          0
+6                           1                          0
+7                           1                          0
+8                           0                          1
+9                           0                          1
+10                          0                          1
+11                          0                          1
+12                          0                          1
+13                          0                          1
+14                          0                          1
+15                          0                          1
+16                          0                          1
+17                          0                          1
+attr(,"assign")
+[1] 1 1
+attr(,"contrasts")
+attr(,"contrasts")$`factor(sample_num_list)`
+[1] "contr.treatment"
+
+   group1 group2
+1       1      0
+2       1      0
+3       1      0
+4       1      0
+5       1      0
+6       1      0
+7       1      0
+8       0      1
+9       0      1
+10      0      1
+11      0      1
+12      0      1
+13      0      1
+14      0      1
+15      0      1
+16      0      1
+17      0      1
+attr(,"assign")
+[1] 1 1
+attr(,"contrasts")
+attr(,"contrasts")$`factor(sample_num_list)`
+[1] "contr.treatment"
+
+[INFO] fit
+An object of class "MArrayLM"
+$coefficients
+             group1   group2
+1007_s_at 10.060223 8.624611
+1053_at    7.411786 7.775533
+117_at     5.864969 5.883298
+121_at     8.272420 8.205384
+1255_g_at  3.607389 3.462543
+22278 more rows ...
+
+$rank
+[1] 2
+
+$assign
+[1] 1 1
+
+$qr
+$qr
+      group1    group2
+1 -2.6457513  0.000000
+2  0.3779645 -3.162278
+3  0.3779645  0.000000
+4  0.3779645  0.000000
+5  0.3779645  0.000000
+12 more rows ...
+
+$qraux
+[1] 1.377964 1.000000
+
+$pivot
+[1] 1 2
+
+$tol
+[1] 1e-07
+
+$rank
+[1] 2
+
+
+$df.residual
+[1] 15 15 15 15 15
+22278 more elements ...
+
+$sigma
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+0.8582464 0.4715402 0.1579371 0.2069814 0.1573198 
+22278 more elements ...
+
+$cov.coefficients
+          group1 group2
+group1 0.1428571    0.0
+group2 0.0000000    0.1
+
+$stdev.unscaled
+             group1    group2
+1007_s_at 0.3779645 0.3162278
+1053_at   0.3779645 0.3162278
+117_at    0.3779645 0.3162278
+121_at    0.3779645 0.3162278
+1255_g_at 0.3779645 0.3162278
+22278 more rows ...
+
+$pivot
+[1] 1 2
+
+$genes
+                 ID Symbol
+1007_s_at 1007_s_at   <NA>
+1053_at     1053_at   RFC2
+117_at       117_at  HSPA6
+121_at       121_at   PAX8
+1255_g_at 1255_g_at GUCA1A
+22278 more rows ...
+
+$Amean
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+ 9.215745  7.625755  5.875751  8.232987  3.522186 
+22278 more elements ...
+
+$method
+[1] "ls"
+
+$design
+  group1 group2
+1      1      0
+2      1      0
+3      1      0
+4      1      0
+5      1      0
+12 more rows ...
+
+[INFO] Store result to files
+TestResults matrix
+1007_s_at   1053_at    117_at    121_at 1255_g_at 
+        0         0         0         0         0 
+22278 more rows ...
+[INFO] Create vennDiagram
+null device 
+          1 

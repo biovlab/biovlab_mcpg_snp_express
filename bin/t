@@ -1,0 +1,82 @@
+0.13
+
+karyotype = data/karyotype/karyotype.human.txt
+chromosomes_display_default = yes
+#chromosomes                 = hs1
+chromosomes_units = 1000000
+<links>
+<link>
+</link>
+</links>
+
+<<include ideogram.conf>>
+<<include ticks.conf>>
+
+<image>
+<<include etc/image.conf>>                
+image_map_use      = yes
+image_map_name     = circosmap
+</image>
+<plots>
+
+
+		<plot>
+			<<include colors.ucsc.conf>>
+			type = histogram
+			fill             = yes
+			stroke_type = outline
+			stroke_thickness = 1p
+			thickness   = 3
+			color=lgray
+			extend_bin  = no
+			#fill_color = blue
+			file = file1
+
+			r1   = 0.98r
+			r0   = 0.85r
+			min=0
+			max=0.15
+			<rules>
+		# This is filter rule
+		#	<rule>
+		#	condition = var(value) > 0.10
+		#	color = red
+		#	</rule>
+			<rule>
+			condition  = 1
+			fill_color = eval(qw(vvlblue vlblue lblue blue dblue vdblue)[remap_int(var(value),0,0.15,0,5)])
+			</rule>
+			</rules>
+
+			<<include axes.conf>>
+			#<<include backgrounds.conf>>
+		</plot>
+	
+<plot>
+	type    = heatmap
+	 r1 = 0.58r
+	 r0 = 0.55r
+	file = file2
+
+	color  = spectral-9-div
+	stroke_thickness = 0
+	min              = 
+
+	max              = 
+
+	<rules>
+	<rule>
+	condition  = 1
+	fill_color = eval(qw(vvlblue vlblue lblue blue dblue vdblue)[remap_int(var(value),,,0,5)])
+	#condition = var(value) > 0.10
+	#color = red
+	</rule>
+	</rules>
+
+
+</plot>
+
+<plot>
+type             = text
+color            = black
+file             = file3

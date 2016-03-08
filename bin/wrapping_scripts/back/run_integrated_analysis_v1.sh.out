@@ -1,0 +1,3 @@
+[INFO] Get GDSNP
+Error: Unable to open file _GSym. Exiting.
+Error: Unable to open file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/integrated/GDMR_GDEG_w_GSym.txt. Exiting.

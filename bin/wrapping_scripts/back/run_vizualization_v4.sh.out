@@ -1,0 +1,118 @@
+[INFO] Start visualizing results
+generate circos for subtype-specific avg methylation with difference and DEGs
+join: file 2 is not in sorted order
+debuggroup summary 0.15s welcome to circos v0.64 2 May 2013
+debuggroup summary 0.15s loading configuration from file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_lu_baa.conf
+debuggroup summary 0.15s found conf file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_lu_baa.conf
+debuggroup summary 0.48s debug will appear for these features: summary
+debuggroup summary 0.48s parsing karyotype and organizing ideograms
+debuggroup summary 0.68s applying global and local scaling
+debuggroup summary 0.69s allocating image, colors and brushes
+debuggroup summary 1.57s drawing highlights and ideograms
+debuggroup summary 2.69s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/heatmap.conf
+debuggroup summary 2.69s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/histogram.conf
+debuggroup summary 2.69s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/text.conf
+debuggroup summary 2.88s reading data and processing histogram track id track_0 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_lu.head100_avg_10Mb
+debuggroup summary 3.02s reading data and processing histogram track id track_1 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_baa.head100_avg_10Mb
+debuggroup summary 3.16s reading data and processing heatmap track id track_2 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_lu_baa.diff
+debuggroup summary 3.31s reading data and processing text track id track_3 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_baa.FC2.DEGs.circos
+debuggroup summary 3.35s drawing histogram track z 0 ME_MGD_lu.head100_avg_10Mb orient out
+debuggroup summary 4.10s drawing histogram track z 0 ME_MGD_baa.head100_avg_10Mb orient out
+debuggroup summary 4.84s drawing heatmap track z 0 circos_lu_baa.diff 
+debuggroup summary 5.11s drawing text track z 0 lu_vs_baa.FC2.DEGs.circos 
+debuggroup summary 5.11s placing text track /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_baa.FC2.DEGs.circos
+debuggroup summary 5.11s ... see progress with -debug_group text
+debuggroup summary 5.11s ... see placement summary with -debug_group textplace
+debuggroup summary,output 6.07s generating output
+debuggroup summary,output 6.07s compiling image map
+debuggroup summary,output 6.07s created HTML image map at /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_baa.html (22 kb)
+debuggroup summary,output 6.86s created PNG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_baa.png (1054 kb)
+debuggroup summary,output 6.86s created SVG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_baa.svg (777 kb)
+join: file 2 is not in sorted order
+debuggroup summary 0.15s welcome to circos v0.64 2 May 2013
+debuggroup summary 0.15s loading configuration from file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_lu_bab.conf
+debuggroup summary 0.15s found conf file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_lu_bab.conf
+debuggroup summary 0.50s debug will appear for these features: summary
+debuggroup summary 0.50s parsing karyotype and organizing ideograms
+debuggroup summary 0.70s applying global and local scaling
+debuggroup summary 0.71s allocating image, colors and brushes
+debuggroup summary 1.60s drawing highlights and ideograms
+debuggroup summary 3.10s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/heatmap.conf
+debuggroup summary 3.10s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/histogram.conf
+debuggroup summary 3.10s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/text.conf
+debuggroup summary 3.29s reading data and processing histogram track id track_0 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_lu.head100_avg_10Mb
+debuggroup summary 3.43s reading data and processing histogram track id track_1 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_bab.head100_avg_10Mb
+debuggroup summary 3.57s reading data and processing heatmap track id track_2 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_lu_bab.diff
+debuggroup summary 3.71s reading data and processing text track id track_3 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_bab.FC2.DEGs.circos
+debuggroup summary 3.75s drawing histogram track z 0 ME_MGD_lu.head100_avg_10Mb orient out
+debuggroup summary 4.49s drawing histogram track z 0 ME_MGD_bab.head100_avg_10Mb orient out
+debuggroup summary 5.22s drawing heatmap track z 0 circos_lu_bab.diff 
+debuggroup summary 5.48s drawing text track z 0 lu_vs_bab.FC2.DEGs.circos 
+debuggroup summary 5.48s placing text track /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_bab.FC2.DEGs.circos
+debuggroup summary 5.48s ... see progress with -debug_group text
+debuggroup summary 5.48s ... see placement summary with -debug_group textplace
+debuggroup summary,output 6.43s generating output
+debuggroup summary,output 6.43s compiling image map
+debuggroup summary,output 6.43s created HTML image map at /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_bab.html (22 kb)
+debuggroup summary,output 7.23s created PNG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_bab.png (1054 kb)
+debuggroup summary,output 7.23s created SVG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_bab.svg (777 kb)
+join: file 2 is not in sorted order
+debuggroup summary 0.15s welcome to circos v0.64 2 May 2013
+debuggroup summary 0.15s loading configuration from file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_baa_bab.conf
+debuggroup summary 0.15s found conf file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_baa_bab.conf
+debuggroup summary 0.49s debug will appear for these features: summary
+debuggroup summary 0.50s parsing karyotype and organizing ideograms
+debuggroup summary 0.70s applying global and local scaling
+debuggroup summary 0.71s allocating image, colors and brushes
+debuggroup summary 1.59s drawing highlights and ideograms
+debuggroup summary 2.70s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/heatmap.conf
+debuggroup summary 2.71s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/histogram.conf
+debuggroup summary 2.71s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/text.conf
+debuggroup summary 2.89s reading data and processing histogram track id track_0 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_baa.head100_avg_10Mb
+debuggroup summary 3.03s reading data and processing histogram track id track_1 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_bab.head100_avg_10Mb
+debuggroup summary 3.18s reading data and processing heatmap track id track_2 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_baa_bab.diff
+debuggroup summary 3.32s reading data and processing text track id track_3 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/baa_vs_bab.FC2.DEGs.circos
+debuggroup summary 3.36s drawing histogram track z 0 ME_MGD_baa.head100_avg_10Mb orient out
+debuggroup summary 4.12s drawing histogram track z 0 ME_MGD_bab.head100_avg_10Mb orient out
+debuggroup summary 4.85s drawing heatmap track z 0 circos_baa_bab.diff 
+debuggroup summary 5.11s drawing text track z 0 baa_vs_bab.FC2.DEGs.circos 
+debuggroup summary 5.11s placing text track /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/baa_vs_bab.FC2.DEGs.circos
+debuggroup summary 5.11s ... see progress with -debug_group text
+debuggroup summary 5.11s ... see placement summary with -debug_group textplace
+debuggroup summary,output 6.08s generating output
+debuggroup summary,output 6.08s compiling image map
+debuggroup summary,output 6.08s created HTML image map at /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/baa_vs_bab.html (22 kb)
+debuggroup summary,output 6.87s created PNG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/baa_vs_bab.png (1054 kb)
+debuggroup summary,output 6.87s created SVG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/baa_vs_bab.svg (777 kb)
+3
+test all_diff
+debug
+debuggroup summary 0.15s welcome to circos v0.64 2 May 2013
+debuggroup summary 0.15s loading configuration from file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_all.conf
+debuggroup summary 0.15s found conf file /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_all.conf
+debuggroup summary 0.62s debug will appear for these features: summary
+debuggroup summary 0.62s parsing karyotype and organizing ideograms
+debuggroup summary 0.82s applying global and local scaling
+debuggroup summary 0.83s allocating image, colors and brushes
+debuggroup summary 1.83s drawing highlights and ideograms
+debuggroup summary 3.04s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/heatmap.conf
+debuggroup summary 3.04s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/histogram.conf
+debuggroup summary 3.04s found conf file /packages/circos/circos-0.64/bin/../etc/tracks/text.conf
+debuggroup summary 3.31s reading data and processing histogram track id track_0 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_lu.head100_avg_10Mb
+debuggroup summary 3.46s reading data and processing histogram track id track_1 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_baa.head100_avg_10Mb
+debuggroup summary 3.60s reading data and processing histogram track id track_2 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/ME_MGD_bab.head100_avg_10Mb
+debuggroup summary 3.75s reading data and processing heatmap track id track_3 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/circos_all.diff
+debuggroup summary 3.89s reading data and processing text track id track_4 from /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_baa.FC2.DEGs.circos
+debuggroup summary 3.93s drawing histogram track z 0 ME_MGD_lu.head100_avg_10Mb orient out
+debuggroup summary 4.70s drawing histogram track z 0 ME_MGD_baa.head100_avg_10Mb orient out
+debuggroup summary 5.44s drawing histogram track z 0 ME_MGD_bab.head100_avg_10Mb orient out
+debuggroup summary 6.18s drawing heatmap track z 0 circos_all.diff 
+debuggroup summary 6.44s drawing text track z 0 lu_vs_baa.FC2.DEGs.circos 
+debuggroup summary 6.44s placing text track /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/lu_vs_baa.FC2.DEGs.circos
+debuggroup summary 6.44s ... see progress with -debug_group text
+debuggroup summary 6.44s ... see placement summary with -debug_group textplace
+debuggroup summary,output 7.41s generating output
+debuggroup summary,output 7.41s compiling image map
+debuggroup summary,output 7.41s created HTML image map at /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/all.html (22 kb)
+debuggroup summary,output 8.21s created PNG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/all.png (1156 kb)
+debuggroup summary,output 8.21s created SVG image /usr/local/apache2/htdocs/biovlab_mcpg_snp_express/result/visualization/circos/all.svg (991 kb)

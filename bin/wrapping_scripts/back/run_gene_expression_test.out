@@ -1,0 +1,322 @@
+Loading required package: GenomicRanges
+Loading required package: methods
+Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, as.vector, cbind, colnames,
+    duplicated, eval, evalq, Filter, Find, get, intersect, is.unsorted,
+    lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, Position, rank, rbind, Reduce, rep.int, rownames,
+    sapply, setdiff, sort, table, tapply, union, unique, unlist
+
+Loading required package: IRanges
+Loading required package: XVector
+Loading required package: Rcpp
+Loading required package: RcppArmadillo
+[1] "**** arguments ****"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg/"
+[1] "C2_head_100000_1.fq"  "C3_head_100000_1.fq"  "Li1_head_100000_1.fq"
+[4] "Li5_head_100000_1.fq"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//C_vs_Li.cnt"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//C_vs_Li.deseq"
+[1] "C"  "C"  "Li" "Li"
+[1] "C_Li"
+[1] "**** arguments ****"
+estimating size factors
+estimating dispersions
+gene-wise dispersion estimates
+mean-dispersion relationship
+final dispersion estimates
+fitting model and testing
+DataFrame with 23345 rows and 6 columns
+         baseMean log2FoldChange     lfcSE      stat       pvalue         padj
+        <numeric>      <numeric> <numeric> <numeric>    <numeric>    <numeric>
+ALB    1172.53378       8.768843 0.5320077 16.482551 4.897444e-61 5.764292e-58
+C3      111.01686       5.995517 0.5919579 10.128282 4.138575e-24 2.435552e-21
+ALDOB    86.79094       5.688358 0.6009403  9.465763 2.914245e-21 1.143355e-18
+AMBP     66.66493       5.450275 0.6049479  9.009494 2.070092e-19 6.091245e-17
+RBP4     54.25382       5.305711 0.6049330  8.770741 1.774939e-18 4.178206e-16
+...           ...            ...       ...       ...          ...          ...
+ZWILCH  0.0000000             NA        NA        NA           NA           NA
+ZWINT   0.0000000             NA        NA        NA           NA           NA
+ZXDA    0.0000000             NA        NA        NA           NA           NA
+ZXDB    0.3870386      0.3349955 0.4132619 0.8106131    0.4175879           NA
+ZXDC    0.0000000             NA        NA        NA           NA           NA
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg/"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//C_Li_ma_plot.jpg"
+null device 
+          1 
+DataFrame with 6 rows and 2 columns
+                       type                               description
+                <character>                               <character>
+baseMean       intermediate               the base mean over all rows
+log2FoldChange      results log2 fold change (MAP): condition Li vs C
+lfcSE               results         standard error: condition Li vs C
+stat                results         Wald statistic: condition Li vs C
+pvalue              results      Wald test p-value: condition Li vs C
+padj                results                      BH adjusted p-values
+you had estimated gene-wise dispersions, removing these
+you had estimated fitted dispersions, removing these
+you had estimated gene-wise dispersions, removing these
+you had estimated fitted dispersions, removing these
+
+Attaching package: ‘gplots’
+
+The following object is masked from ‘package:IRanges’:
+
+    space
+
+The following object is masked from ‘package:stats’:
+
+    lowess
+
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+Loading required package: GenomicRanges
+Loading required package: methods
+Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, as.vector, cbind, colnames,
+    duplicated, eval, evalq, Filter, Find, get, intersect, is.unsorted,
+    lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, Position, rank, rbind, Reduce, rep.int, rownames,
+    sapply, setdiff, sort, table, tapply, union, unique, unlist
+
+Loading required package: IRanges
+Loading required package: XVector
+Loading required package: Rcpp
+Loading required package: RcppArmadillo
+[1] "**** arguments ****"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg/"
+[1] "C2_head_100000_1.fq"  "C3_head_100000_1.fq"  "Th1_head_100000_1.fq"
+[4] "Th5_head_100000_1.fq"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//C_vs_Th.cnt"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//C_vs_Th.deseq"
+[1] "C"  "C"  "Th" "Th"
+[1] "C_Th"
+[1] "**** arguments ****"
+estimating size factors
+estimating dispersions
+gene-wise dispersion estimates
+mean-dispersion relationship
+final dispersion estimates
+fitting model and testing
+DataFrame with 23345 rows and 6 columns
+        baseMean log2FoldChange     lfcSE       stat    pvalue      padj
+       <numeric>      <numeric> <numeric>  <numeric> <numeric> <numeric>
+AACS        0.50      0.2538781 0.3260790  0.7785783 0.4362282 0.9330521
+AAK1        1.00      0.4136670 0.3970908  1.0417440 0.2975304 0.9330521
+AAMDC       0.75      0.3417871 0.3686775  0.9270625 0.3538941 0.9330521
+AARS2       0.25     -0.1437328 0.2534023 -0.5672120 0.5705702 0.9330521
+AASS        0.25     -0.1437328 0.2534023 -0.5672120 0.5705702 0.9330521
+...          ...            ...       ...        ...       ...       ...
+ZSWIM8         0             NA        NA         NA        NA        NA
+ZUFSP          0             NA        NA         NA        NA        NA
+ZWILCH         0             NA        NA         NA        NA        NA
+ZWINT          0             NA        NA         NA        NA        NA
+ZXDA           0             NA        NA         NA        NA        NA
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg/"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//C_Th_ma_plot.jpg"
+null device 
+          1 
+DataFrame with 6 rows and 2 columns
+                       type                               description
+                <character>                               <character>
+baseMean       intermediate               the base mean over all rows
+log2FoldChange      results log2 fold change (MAP): condition Th vs C
+lfcSE               results         standard error: condition Th vs C
+stat                results         Wald statistic: condition Th vs C
+pvalue              results      Wald test p-value: condition Th vs C
+padj                results                      BH adjusted p-values
+you had estimated gene-wise dispersions, removing these
+you had estimated fitted dispersions, removing these
+Warning message:
+glm.fit: algorithm did not converge 
+you had estimated gene-wise dispersions, removing these
+you had estimated fitted dispersions, removing these
+Warning message:
+glm.fit: algorithm did not converge 
+
+Attaching package: ‘gplots’
+
+The following object is masked from ‘package:IRanges’:
+
+    space
+
+The following object is masked from ‘package:stats’:
+
+    lowess
+
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+Loading required package: GenomicRanges
+Loading required package: methods
+Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, as.vector, cbind, colnames,
+    duplicated, eval, evalq, Filter, Find, get, intersect, is.unsorted,
+    lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, Position, rank, rbind, Reduce, rep.int, rownames,
+    sapply, setdiff, sort, table, tapply, union, unique, unlist
+
+Loading required package: IRanges
+Loading required package: XVector
+Loading required package: Rcpp
+Loading required package: RcppArmadillo
+[1] "**** arguments ****"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg/"
+[1] "Li1_head_100000_1.fq" "Li5_head_100000_1.fq" "Th1_head_100000_1.fq"
+[4] "Th5_head_100000_1.fq"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//Li_vs_Th.cnt"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//Li_vs_Th.deseq"
+[1] "Li" "Li" "Th" "Th"
+[1] "Li_Th"
+[1] "**** arguments ****"
+estimating size factors
+estimating dispersions
+gene-wise dispersion estimates
+mean-dispersion relationship
+final dispersion estimates
+fitting model and testing
+Warning message:
+In estimateDispersionsFit(object, fitType = fitType, quiet = quiet) :
+  the parametric fit of dispersion estimates over the mean of counts
+failed, which occurs when the trend is not well captured by the
+function y = a/x + b. A local regression fit is automatically performed,
+and the analysis can continue. You can specify fitType='local' or 'mean'
+to avoid this message if re-running the same data.
+When using local regression fit, the user should examine plotDispEsts(dds)
+to make sure the fitted line is not sharply curving up or down based on
+the position of individual points.
+DataFrame with 23345 rows and 6 columns
+         baseMean log2FoldChange     lfcSE       stat       pvalue         padj
+        <numeric>      <numeric> <numeric>  <numeric>    <numeric>    <numeric>
+ALB    1230.39410      -9.782849 0.4809130 -20.342243 5.438508e-92 6.406563e-89
+C3      117.31429      -5.599251 0.5999680  -9.332583 1.033214e-20 6.085632e-18
+ALDOB    90.57036      -5.672456 0.6281729  -9.030087 1.715352e-19 6.735614e-17
+AMBP     70.22426      -5.312999 0.6407535  -8.291798 1.115496e-16 3.285137e-14
+APOC3   128.18617      -5.324007 0.6586117  -8.083680 6.284090e-16 1.480532e-13
+...           ...            ...       ...        ...          ...          ...
+ZWILCH  0.0000000             NA        NA         NA           NA           NA
+ZWINT   0.0000000             NA        NA         NA           NA           NA
+ZXDA    0.0000000             NA        NA         NA           NA           NA
+ZXDB    0.5680478     -0.1328663 0.4837434 -0.2746628    0.7835753           NA
+ZXDC    0.2178001      0.4371235 0.5397493  0.8098639    0.4180184           NA
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg/"
+[1] "/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data//gene_exp/rna_seq/deg//Li_Th_ma_plot.jpg"
+null device 
+          1 
+DataFrame with 6 rows and 2 columns
+                       type                                description
+                <character>                                <character>
+baseMean       intermediate                the base mean over all rows
+log2FoldChange      results log2 fold change (MAP): condition Th vs Li
+lfcSE               results         standard error: condition Th vs Li
+stat                results         Wald statistic: condition Th vs Li
+pvalue              results      Wald test p-value: condition Th vs Li
+padj                results                       BH adjusted p-values
+you had estimated gene-wise dispersions, removing these
+you had estimated fitted dispersions, removing these
+Warning message:
+In estimateDispersionsFit(object) :
+  the parametric fit of dispersion estimates over the mean of counts
+failed, which occurs when the trend is not well captured by the
+function y = a/x + b. A local regression fit is automatically performed,
+and the analysis can continue. You can specify fitType='local' or 'mean'
+to avoid this message if re-running the same data.
+When using local regression fit, the user should examine plotDispEsts(dds)
+to make sure the fitted line is not sharply curving up or down based on
+the position of individual points.
+you had estimated gene-wise dispersions, removing these
+you had estimated fitted dispersions, removing these
+Warning message:
+In estimateDispersionsFit(object) :
+  the parametric fit of dispersion estimates over the mean of counts
+failed, which occurs when the trend is not well captured by the
+function y = a/x + b. A local regression fit is automatically performed,
+and the analysis can continue. You can specify fitType='local' or 'mean'
+to avoid this message if re-running the same data.
+When using local regression fit, the user should examine plotDispEsts(dds)
+to make sure the fitted line is not sharply curving up or down based on
+the position of individual points.
+
+Attaching package: ‘gplots’
+
+The following object is masked from ‘package:IRanges’:
+
+    space
+
+The following object is masked from ‘package:stats’:
+
+    lowess
+
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 
+null device 
+          1 

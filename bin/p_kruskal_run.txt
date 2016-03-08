@@ -1,0 +1,9 @@
+ Rscript p_kruskal.r -i /data/project/mcpg/result/profile/ME_matrix.txt -c lu,lu,lu,lu,lu,lu,lu,lu,lu,lu,lu,lu,lu,baa,baa,baa,baa,baa,baa,baa,bab,bab,bab,bab,bab,bab,bab,bab,bab,bab -m 0 --o1 output1.txt --o2 output2.txt  -n 16
+
+ -i : input file path 
+ -c : class label (sep with ",")
+ -m : mode (0 : all diff, 1: 1 class diff (not implemented))
+ --o1 : total output file
+ --o2 : significant output file
+ -n : cpu number
+ -a : p-value cutoff (default 0.05)

@@ -1,0 +1,836 @@
+#!/bin/bash
+source `dirname $0`/../../env.sh
+
+# directories
+bin_dir="$WORK_DIR/bin"
+result_dir="$WORK_DIR/result"
+profile_result_dir="$WORK_DIR/profile"
+viz_result_dir=$result_dir"/visualization"
+methylkit_from_bs_result_dir=$result_dir"/methyl/bs/methylkit"
+medips_from_mbd_result_dir=$result_dir"/methyl/mbd/medips"
+snp_from_mbd_result_dir=$result_dir"/snp/from_mbd"
+mbd_result_dir=$result_dir"/methyl/mbd"
+circos_dir=$viz_result_dir"/circos"
+rnaseq_result_dir=$result_dir"/gene_exp/rna_seq"
+deg_analysis_dir=$rnaseq_result_dir"/deg/"
+
+# variables
+ME_all_merged=$profile_result_dir/ME_MGD		# prepare initiall prefix for all merged file
+
+# functions
+function my_join { local IFS="$1"; shift; echo "$*"; }
+####################################################################################
+# 0. set parameters
+####################################################################################
+
+# TODO:set user-specific result dir to copy the result to user-specific web accessible dir
+
+# MBD
+		mbd_lu1=/data/project/mcpg/test_data/icbp/fastq/100730_s_1.fq 
+		mbd_lu2=/data/project/mcpg/test_data/icbp/fastq/100730_s_7.fq 
+		mbd_lu3=/data/project/mcpg/test_data/icbp/fastq/100730_s_8.fq 
+		mbd_lu4=/data/project/mcpg/test_data/icbp/fastq/100803_s_5.fq
+		mbd_lu5=/data/project/mcpg/test_data/icbp/fastq/100803_s_6.fq
+		mbd_lu6=/data/project/mcpg/test_data/icbp/fastq/100812_s_3.fq
+		mbd_lu7=/data/project/mcpg/test_data/icbp/fastq/100812_s_4.fq
+		mbd_lu8=/data/project/mcpg/test_data/icbp/fastq/100824_s_2.fq
+		mbd_lu9=/data/project/mcpg/test_data/icbp/fastq/100831_s_5.fq
+		mbd_lu10=/data/project/mcpg/test_data/icbp/fastq/100902_s_7.fq
+		mbd_lu11=/data/project/mcpg/test_data/icbp/fastq/100908_s_3.fq
+		mbd_lu12=/data/project/mcpg/test_data/icbp/fastq/100908_s_4.fq
+		mbd_lu13=/data/project/mcpg/test_data/icbp/fastq/100908_s_8.fq
+
+		mbd_baa1=/data/project/mcpg/test_data/icbp/fastq/100730_s_5.fq 
+		mbd_baa2=/data/project/mcpg/test_data/icbp/fastq/100831_s_6.fq 
+		mbd_baa3=/data/project/mcpg/test_data/icbp/fastq/100831_s_8.fq 
+		mbd_baa4=/data/project/mcpg/test_data/icbp/fastq/100730_s_4.fq
+		mbd_baa5=/data/project/mcpg/test_data/icbp/fastq/100812_s_2.fq
+		mbd_baa6=/data/project/mcpg/test_data/icbp/fastq/100730_s_6.fq
+		mbd_baa7=/data/project/mcpg/test_data/icbp/fastq/100908_s_5.fq
+
+		mbd_bab1=/data/project/mcpg/test_data/icbp/fastq/100730_s_2.fq 
+		mbd_bab2=/data/project/mcpg/test_data/icbp/fastq/100812_s_1.fq 
+		mbd_bab3=/data/project/mcpg/test_data/icbp/fastq/100803_s_3.fq
+		mbd_bab4=/data/project/mcpg/test_data/icbp/fastq/100803_s_7.fq
+		mbd_bab5=/data/project/mcpg/test_data/icbp/fastq/100812_s_5.fq
+		mbd_bab6=/data/project/mcpg/test_data/icbp/fastq/100824_s_4.fq
+		mbd_bab7=/data/project/mcpg/test_data/icbp/fastq/100831_s_4.fq # Not in GEO, so created from ICBP data ELAND export format
+		mbd_bab8=/data/project/mcpg/test_data/icbp/fastq/100902_s_6.fq
+		mbd_bab9=/data/project/mcpg/test_data/icbp/fastq/100908_s_6.fq # Not in GEO, so created from ICBP data ELAND export format
+		mbd_bab10=/data/project/mcpg/test_data/icbp/fastq/100910_s_4.fq
+
+
+# set sample lists
+
+mbd_list="..."
+mbd_list=($mbd_lu1 $mbd_lu2 $mbd_lu3 $mbd_lu4 $mbd_lu5 $mbd_lu6 $mbd_lu7 $mbd_lu8 $mbd_lu9 $mbd_lu10 $mbd_lu11 $mbd_lu12 $mbd_lu13 $mbd_baa1 $mbd_baa2 $mbd_baa3 $mbd_baa4 $mbd_baa5 $mbd_baa6 $mbd_baa7 $mbd_bab1 $mbd_bab2 $mbd_bab3 $mbd_bab4 $mbd_bab5 $mbd_bab6 $mbd_bab7 $mbd_bab8 $mbd_bab9 $mbd_bab10)
+
+ME_input_type=1 #(1:MBD, 2:BS, 3:infinum...) 
+GE_input_type=1 #(1:RNAseq, 2:microarray...) 
+MU_input_type=1 #(1:RNAseq, 2:DNAseq, 3:humanhap...) 
+mbd_type_list=("lu" "lu" "lu" "lu" "lu" "lu" "lu" "lu" "lu" "lu" "lu" "lu" "lu" "baa" "baa" "baa" "baa" "baa" "baa" "baa" "bab" "bab" "bab" "bab" "bab" "bab" "bab" "bab" "bab" "bab")
+type_kind=("lu" "baa" "bab")
+sample_num_in_class=("13" "7" "8")
+fold_change=2
+
+####################################################################################
+# 6. Visualization 
+####################################################################################
+
+mkdir -p $viz_result_dir
+
+echo "[INFO] Start visualizing results"
+#################################
+# 6.1 For Raw data. (NGSplot, UCSC links, ME-density)
+#################################
+
+############
+# 6.1.1 GE 
+############
+
+<<'COMMENT'
+# TODO : set data kinds (RNAseq or array ..)
+# UCSC links for each samples : BigWig
+for (( i=0; i<${#cel_list[@]}; i++ )); do 
+	# copy to web accessible directory
+	# TODO :  this may be not necessary cuz already we are in the web accessible dir
+	cp $cel_result_dir/`basename \${cel_list[$i]}`.bw $WEB_ACCESSIBLE_DIR
+	# print UCSC url
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=test_SNP%20description=test2SNP%20visibility=dense%20bigDataUrl=$WEB_ACCESSIBLE_LOC/${cel_list[$i]}.bw"
+done
+
+
+
+############
+# 6.1.2 ME
+############
+
+# UCSC links for each samples : BigWig
+if [ $ME_input_type -eq 1 ]; then # MBD
+	count=0
+	for (( i=0; i<${#mbd_list[@]}; i++ )); do
+		{
+			met_level_file=$medips_from_mbd_result_dir/`basename \${mbd_list[$i]}`".met_level";
+
+			# create bigWig file for UCSC
+			awk 'NR==1{next;}{print}' $met_level_file | cut -f1,2,3,5 | bedtools intersect -a - -b $REF_HUMAN_GENOME_100_BIN_BED -sorted > $viz_result_dir/`basename \${mbd_list[$i]}`".met_level.bed" ;
+			bedGraphToBigWig $viz_result_dir/`basename \${mbd_list[$i]}`".met_level.bed" $REF_HUMAN_CHR_SIZE $viz_result_dir/`basename \${mbd_list[$i]}`".met_level.bw";
+
+			cp $viz_result_dir/`basename \${mbd_list[$i]}`".met_level.bw" $WEB_ACCESSIBLE_DIR;
+			# print UCSC url
+			echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl=$WEB_ACCESSIBLE_LOC/`basename \${mbd_list[$i]}`.met_level.bw";
+		} &
+		let count+=1
+		[[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
+	done; wait
+
+elif [ $ME_input_type -eq 2 ]; then # BS
+	ls $methylkit_from_bs_result_dir/*.sorted.bw | xargs -I {} cp {} $WEB_ACCESSIBLE_DIR
+fi
+
+
+
+
+# NGS plot
+if [ $ME_input_type -eq 2 ] || [ $ME_input_type -eq 1 ] ; then # BS or MBD
+	for (( k=0; k<${#type_kind[@]}; k++ )); do 
+		echo -n "" > $viz_result_dir/ngsplot_config_ME.txt
+		echo -n "" > $viz_result_dir/ngsplot_config_ME_${type_kind[$k]}.txt
+
+
+		for (( i=0; i<${#mbd_list[@]}; i++ )); do 
+			temp_filename_only=`basename \${mbd_list[$i]}`
+
+			# create configure file for all multiple file plotting
+			echo -e "$mbd_result_dir/$temp_filename_only.sorted.bam\t-1\t$temp_filename_only" >> $viz_result_dir/ngsplot_config_ME_all.txt
+			#echo -e "$mbd_result_dir/$temp_filename_only.sorted.bam\tintron.bed\t$temp_filename_only" >> $viz_result_dir/ngsplot_config_ME_all.txt
+
+			# create configure file for subtype multiple file plotting
+			if [ ${mbd_type_list[$i]} == ${type_kind[$k]} ]; then
+				echo -e "$mbd_result_dir/$temp_filename_only.sorted.bam\t-1\t$temp_filename_only" >> $viz_result_dir/ngsplot_config_ME_${type_kind[$k]}.txt
+				#echo -e "$mbd_result_dir/$temp_filename_only.sorted.bam\tintron.bed\t$temp_filename_only" >> $viz_result_dir/ngsplot_config_ME_${type_kind[$k]}.txt
+			fi
+		done
+
+		# NGS plot itself is parallelized, so do not need to be parallelzed
+		for region in "cgi" "genebody" "enhancer" "dhs" "cgi" "exon"; do 
+
+			# THIS IS HARDCODED FOR ICBP PROJECT!!!
+			if [ "$region" == "genebody" ]; then
+				YAS="0.02,0.13"
+				SC="0,0.5" # NOTE : NOT YET TESTED
+			elif [ "$region" == "exon" ]; then
+				YAS="0.04,0.21"
+				SC="0,0.5" # NOTE : NOT YET TESTED
+			elif [ "$region" == "cgi" ]; then
+				YAS="0.01,0.15"
+				SC="0,0.5" # NOTE : NGSPLOT HEATMAP NEED TO BE RESCALE TO FIT ALL THRE FIGURE HAVING SAME SCALE!!!
+			elif [ "$region" == "dhs" ]; then
+				YAS="0.02,0.15"
+				SC="0,0.5" # NOTE : NOT YET TESTED
+			else
+				YAS="0.00,0.20"
+				SC="0,0.5" # NOTE : NOT YET TESTED
+			fi
+			ngs.plot.r -SC $SC -YAS $YAS -G hg19 -R $region -C $viz_result_dir/ngsplot_config_ME_${type_kind[$k]}.txt -O $viz_result_dir/ME_${type_kind[$k]}_$region 
+		done
+	done
+
+	# for all sample
+	for region in "bed" ;do #"genebody" "enhancer" "dhs" "cgi"; do
+		/packages/test2/ngsplot-develop/bin/ngs.plot.r -SC $SC -G hg19 -R $region -C $viz_result_dir/ngsplot_config_ME_all.txt -O $viz_result_dir/ME_all_$region -E /data/project/mcpg/lib/region_info/intron.bed
+	done
+fi
+
+
+
+
+
+
+############
+# 6.1.3 MU
+############
+
+# UCSC links
+for (( i=0; i<${#mbd_list[@]}; i++ )); do
+	cp $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.gz" $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.gz.tbi" $WEB_ACCESSIBLE_DIR
+	# print UCSC url
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=vcfTabix%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl=$WEB_ACCESSIBLE_LOC/`basename \${mbd_list[$i]}`.vcf.gz"
+done
+
+
+
+
+
+#################################
+# 6.2 For DEG, DMR, DSNP (Circos, Heatmap, region plot, Mu-Ge plot)
+#################################
+
+
+############
+# 6.2.1 GE 
+############
+
+# depic in the circos
+
+
+############
+# 6.2.2 ME 
+############
+
+COMMENT
+# circos
+mkdir -p $circos_dir
+echo "generate circos for subtype-specific avg methylation with difference and DEGs"
+
+
+# create subtype avg methyl file from merged file
+subtype_start_index_in_merged_file=0
+for (( i=0; i<${#type_kind[@]}; i++ )); do 
+	#subtype_ME_merged_file=$ME_all_merged"_"${type_kind[$i]}
+	subtype_ME_merged_file="/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/temp_result_files/ME_MGD_"${type_kind[$i]}".head100" # temp test with samll datda
+	subtype_ME_merged_avg_file=$viz_result_dir/`basename \$subtype_ME_merged_file`"_avg"
+	subtype_ME_merged_avg_10Mb_file=$subtype_ME_merged_avg_file"_10Mb"
+
+	# file example
+	#chr	bin_start	bin_end	100730_s_1.fq-rms	100730_s_7.fq-rms...	range_start	range_end	strand	gene_symbol	range_kind	refseq
+	#chr1	9801	9900	0	0	0	0	0	0	0	0	0	0	0	0	0	9873	11873	+	DDX11L1	promoter	NR_046018
+	#chr1	9901	10000	0	0	0	0	0	0	0	0	0	0	0	0	0	9873	11873	+	DDX11L1	promoter	NR_046018
+
+	# TODO : check ME input type. file format should be same for all input type as above
+	# compute avg methyl value
+	temp_sample_num_in_class=${#sample_num_in_class[$i]}
+	#awk -v subtype_start_index_in_merged_file=$subtype_start_index_in_merged_file -v sample_num_in_class=$temp_sample_num_in_class 'NR==1{print "#chr","start","end","avg_value";next;}{avg_value=0; for (i=1+subtype_start_index_in_merged_file+3; i<=sample_num_in_class+3; i++){avg_value+=$i;}; avg_value=avg_value/sample_num_in_class; print $1,$2,$3,avg_value;}' OFS='\t' $subtype_ME_merged_file > $subtype_ME_merged_avg_file
+	awk -v sample_num_in_class=$temp_sample_num_in_class 'NR==1{print "#chr","start","end","avg_value";next;}{avg_value=0; for (i=1+3; i<=sample_num_in_class+3; i++){avg_value+=$i;}; avg_value=avg_value/sample_num_in_class; print $1,$2,$3,avg_value;}' OFS='\t' $subtype_ME_merged_file > $subtype_ME_merged_avg_file
+
+	# move index
+	((subtype_start_index_in_merged_file+=$temp_sample_num_in_class))
+
+	# merge value the range in 10Mb for circos input
+	bedtools map -header -c 4 -o mean -a $REF_HUMAN_GENOME_10M_BIN_BED -b $subtype_ME_merged_avg_file | sed -e 's/chr/hs/g' | sed -e 's/\t\./\t0/g' > $subtype_ME_merged_avg_10Mb_file
+
+	# convert to circos input
+	# chr1  0 10000000  5.532632995
+	# chr1  10000000  20000000  .
+#echo "done"
+done
+
+	#cat ${subtype_file_list[@]} | grep -v "start" | bedtools map -c 4,5 -o sum,sum -b - -a $REF_HUMAN_GENOME_10M_BIN_BED | awk -v subtype_length=$subtype_length 'NR==1{OFS="t"; print "chr","start","end","count","rms";next;}{print $1,$2,$3,$4/subtype_length,$5/subtype_length}'> $viz_result_dir/${type_kind[$i]}_10Mb_merged.met_level
+	
+
+
+
+
+
+
+
+
+
+
+
+
+<<'COMMENT'
+# create subtype merged methyl file
+subtype_file_list=()
+
+for (( i=0; i<${#type_kind[@]}; i++ )); do 
+	for (( j=0; j<${#mbd_list[@]}; j++ )); do
+
+		# get subtype met_level file list
+		if [ ${mbd_type_list[$j]} == ${type_kind[$i]} ]; then
+			temp_filename_only1=`basename \${mbd_list[$j]}`
+			methyl_file=/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/temp_result_files/$temp_filename_only1".met_level_sortedgt"
+			subtype_file_list+=($methyl_file)
+		fi
+	done
+
+	# merge subtype specific met level file	
+	echo " merge subtype specific met level file	"
+	# NOTE : HERE HEADER NAME DEPENDANCY!!
+	#cat ${subtype_file_list[@]} | grep -v "start" | bedtools map -c 4,5 -o sum,sum -b - -a $REF_HUMAN_GENOME_10M_BIN_BED | awk -v subtype_length=$subtype_length 'NR==1{OFS="t"; print "chr","start","end","count","rms";next;}{print $1,$2,$3,$4/subtype_length,$5/subtype_length}'> $viz_result_dir/${type_kind[$i]}_10Mb_merged.met_level
+	cat ${subtype_file_list[@]} | grep -v "start"
+
+
+	# convert to circos input file
+done
+
+	
+
+exit
+COMMENT
+
+
+
+
+
+
+
+
+
+<<'COMMENT'
+for (( i=0; i<${#type_kind[@]}; i++ )); do 
+	temp_merged_file=$viz_result_dir"/${type_kind[$i]}_temp_merged.met_level"
+	subtype_merged_file=$viz_result_dir"/${type_kind[$i]}_merged.met_level"
+
+	# TODO : set methyl file depends on input type
+	subtype_count=0
+	if [ $ME_input_type -eq 1 ]; then
+		for (( j=0; j<${#mbd_list[@]}; j++ )); do
+				temp_filename_only2=`basename \${mbd_list[$j]}`
+				methyl_file=$mbd_result_dir/$temp_filename_only1".met_level"
+
+				# subtype check
+				if [ ${mbd_type_list[$j]} != ${type_kind[$i]} ]; then
+					continue
+				fi
+
+				# for first file
+				if [ $subtype_count -eq 0 ]; then # for first file, just copy to merged file 
+					((subtype_count++))	
+					cp $methyl_file $temp_merged_file
+					continue
+				fi
+			
+				# merge the methyl file by class (subtype)
+
+				bedtools map -header -c 4,5 -o sum,sum -a $temp_merged_file -b $methyl_file > $viz_result_dir/temp_merge.txt && mv $viz_result_dir/temp_merge.txt $temp_merged_file
+		done
+		
+		# compute average value for subtype-specific merged file
+		awk -v subtype_length=$subtype_length 'NR==1{OFS="\t"; print; next;}{print $1,$2,$3,$4/subtype_length,%5/subtype_length}' $temp_merged_file  > $subtype_merged_file
+
+		# TODO : check which value is used for circos?
+		# convert to circos input file					# e.g : hs1 1 10000000  0.113947
+		# merge bin to 10Mbp
+		bedtools /m
+	fi
+COMMENT
+
+	
+	# methyl file
+
+
+all_type_file_list=()
+for (( i=0; i<${#type_kind[@]}; i++ )); do 
+	for (( j=$i+1; j<${#type_kind[@]}; j++ )); do 
+
+		# met level file
+		# generate circos input list deliminated by ';'	
+		subtype_ME_merged_file="/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/temp_result_files/ME_MGD_"${type_kind[$i]}".head100" # temp test with samll datda
+		subtype_ME_merged_file_2="/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/temp_result_files/ME_MGD_"${type_kind[$j]}".head100" # temp test with samll datda
+		subtype_ME_merged_avg_file=$viz_result_dir/`basename \$subtype_ME_merged_file`"_avg"
+		subtype_ME_merged_avg_file_2=$viz_result_dir/`basename \$subtype_ME_merged_file_2`"_avg"
+		subtype_ME_merged_avg_10Mb_file=$subtype_ME_merged_avg_file"_10Mb"
+		subtype_ME_merged_avg_10Mb_file_2=$subtype_ME_merged_avg_file_2"_10Mb"
+
+
+		# for deg
+	  work_file=${type_kind[$i]}"_vs_"${type_kind[$j]}
+    #DEG_file_name=$deg_analysis_dir/$work_file".FC"$fold_change".DEGs"
+    DEG_file_name=/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data/gene_exp/rna_seq/deg/Li_vs_Th.FC2.DEGs
+		DEG_for_circos=$circos_dir/$work_file".FC"$fold_change".DEGs.circos"
+		diff_file=$circos_dir"/circos_${type_kind[$i]}_${type_kind[$j]}.diff"
+		file_list=$subtype_ME_merged_avg_10Mb_file";"$subtype_ME_merged_avg_10Mb_file_2
+
+
+		# TODO : check the cut off for degs file name
+
+		# convert deg file to circos file (add position information and change chr to hs)
+
+		# genebody info
+		#	chr1	11873	14409	DDX11L1	NR_046018	+
+		# chr1	14361	29370	WASH7P	NR_024540	-
+
+		join -1 1 -2 4 <(sort $DEG_file_name) <(sort -k4 $REF_HUMAN_GENE_GENEBODY_INFO) | awk '{print $2,$3,$4,$1}' OFS='\t' | sed -e 's/chr/hs/g' > $DEG_for_circos
+
+		#SLCO1B1 chr12 21284127 21392730 NM_006446 +
+		#SLCO1B3 chr12 20963637 21069843 NM_019844 +kI
+		#bedtools intersect -a $DEG_file_name -b $REF_HUMAN_GENE_GENEBODY_INFO
+		
+		# TODO
+
+		# create diff file
+		# chr1  0 10000000  5.532632995
+		paste $subtype_ME_merged_avg_10Mb_file $subtype_ME_merged_avg_10Mb_file_2 | awk '{print $1,$2,$3,$4-$8}' OFS='\t' > $diff_file
+		
+		# create subtype pair-wise circos
+		# TODO : set min max value for circos
+		circos_min=0
+		circos_max=15
+		temp_circos_file=$circos_dir"/circos_${type_kind[$i]}_${type_kind[$j]}.conf"
+		sh $bin_dir/generate_circos_conf.sh 2 $file_list $diff_file $DEG_for_circos $CIRCOS_CONFIG_LOC $circos_min $circos_max > $temp_circos_file
+		circos -conf $temp_circos_file -outputdir $circos_dir -outputfile $work_file
+	done
+	all_type_file_list+=($subtype_ME_merged_avg_10Mb_file)
+done
+all_type_file_list+=($subtype_ME_merged_avg_10Mb_file_2)
+# TODO : snagseon
+# measure entropy for all diff file, set proper min mac for diff as well... maybe it should be set seperately in generate_circos_conf.
+diff_all_file=
+# create all subtype circos
+circos_min=0
+circos_max=15
+temp_circos_file=$circos_dir"/circos_all.conf"
+sh $bin_dir/generate_circos_conf.sh ${#type_kind[@]} $all_type_file_list $diff_all_file $CIRCOS_CONFIG_LOC $circos_min $circos_max > $temp_circos_file
+circos -conf $temp_circos_file -outputdir $circos_dir -outputfile "all"
+
+
+############
+# 6.2.3 MU 
+############
+
+
+
+
+
+
+
+
+# 2. Region stat
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# 2.2 SNP : dot plot 
+#NUM_CPUS=5
+#count=0 
+#for (( i=0; i<${#mbd_list[@]}; i++ )); do 
+#	bedtools intersect -wa -wb -a $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.bed.all.cov" -b $human_refseq_various_ranges > $viz_result_dir/`basename \${mbd_list[$i]}`".SNP_bin_ranges" &
+#	let count+=1
+# 	[[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
+#done
+
+# compute region based AVG values divide by 100
+# example : chr10   95100   95200   0       chr10   95178   96678   -       NM_177987       TUBB8   promoter
+# devide each range by relative 100 bins 
+#awk '{interval=int(($3-$2)/100);if($4=="+"){for (i=0;i<100;i++){end=$2+interval*(i+1);start=$2+interval*i; if (end<$3){print $1"\t"start"\t"end"\t"i"\t"$7}else{print $1"\t"start"\t"$3"\t"i"\t"$7} }}else{for (i=99;i>=0;i--){end=$2+interval*(i+1);start=$2+interval*i; if (end<$3){print $1"\t"start"\t"end"\t"i"\t"$7}else{print $1"\t"start"\t"$3"\t"i"\t"$7} }} }' $human_refseq_various_ranges > $viz_result_dir/human_refseq_various_ranges.div_100
+
+# create ID for stat matrix
+echo "relative_range" > $viz_result_dir/prefix_percentage_ids
+echo "5p" >> $viz_result_dir/prefix_percentage_ids
+for ((i=1; i<99; i++)); do 
+	echo $i"%" >> $viz_result_dir/prefix_percentage_ids
+done
+echo "3p" >> $viz_result_dir/prefix_percentage_ids
+
+for range in "genebody" "cpgIsland" "exon"; do 
+	# get range bins(1-100)
+	grep $range $viz_result_dir/human_refseq_various_ranges.div_100 > $viz_result_dir/temp_range_div_100
+
+	paste_list_all=()
+	for (( k=0; k<${#type_kind[@]}; k++ )); do 
+		paste_list_sub_type=()
+		count=0
+		for (( i=0; i<${#mbd_list[@]}; i++ )); do 
+
+			# create range stat file per sample
+			work_file=$viz_result_dir/SNP_$range"_MAT_"`basename \${mbd_list[$i]}`
+
+			if [ ${mbd_type_list[$i]} == ${type_kind[$k]} ]; then
+				
+				# filter outlier samples # NOTE: HERE JUST FOR TESTING!!!!!!!!!!!!!!!!!!!
+				if [ $i -eq 5 ] || [ $i -eq 6 ] || [ $i -eq 7 ] || [ $i -eq 17 ] || [ $i -eq 21 ] || [ $i -eq 24 ]; then
+					continue
+				fi
+
+				echo "[INFO] Estimate relative coverage in range of all $range region in `basename \${mbd_list[$i]}`"
+
+				paste_list_sub_type+=($work_file)
+				paste_list_all+=($work_file)
+				echo "`basename \${mbd_list[$i]}`" > $work_file
+
+				# parallization
+				cut -f1,2,3 $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.bed" | bedtools coverage -b $viz_result_dir/temp_range_div_100 -a - -counts | cut -f4,6  | sort -k1,1n | bedtools groupby -g 1 -c 2 -o sum | cut -f2 >> $work_file &
+
+				# NOTE : MEMORY INTENSE, so ONLY USE 5 CPUS			
+				let count+=1; [[ $((count%5)) -eq 0 ]] && wait
+			fi
+		done; wait
+		paste $viz_result_dir/prefix_percentage_ids ${paste_list_sub_type[@]} > $viz_result_dir/SNP_$range"_MAT_"${type_kind[$k]}
+
+		# HARDCODED FOR ICBP project
+		if [ "$range" == "genebody" ]; then
+			temp_min_value=1000
+			temp_max_value=10000
+		elif [ "$range" == "cpgIsland" ]; then
+			temp_min_value=100
+			temp_max_value=1700
+		elif [ "$range" == "exon" ]; then
+			temp_min_value=0
+			temp_max_value=1000
+		else
+			temp_min_value=0
+			temp_max_value=10000
+		fi
+
+
+		# HARDCODED FOR ICBP project
+		Rscript $bin_dir/plot_min_max.r $viz_result_dir/SNP_$range"_MAT_"${type_kind[$k]} $viz_result_dir/SNP_$range"_"${type_kind[$k]}".jpg" $temp_min_value $temp_max_value
+		#Rscript $bin_dir/plot.r $viz_result_dir/SNP_$range"_MAT_"${type_kind[$k]} $viz_result_dir/SNP_$range"_"${type_kind[$k]}".jpg"
+	done
+
+	# merge all stat files
+	paste $viz_result_dir/prefix_percentage_ids ${paste_list_all[@]} > $viz_result_dir/SNP_$range"_MAT_all"
+
+	# HARDCODED FOR ICBP project
+	Rscript $bin_dir/plot_min_max.r $viz_result_dir/SNP_$range"_MAT_all" $viz_result_dir/SNP_$range"_all.jpg" $temp_min_value $temp_max_value
+	#Rscript $bin_dir/plot.r $viz_result_dir/SNP_$range"_matrix4plot_all" $viz_result_dir/SNP_$range"_all.jpg"
+
+	cp $viz_result_dir/SNP_*.jpg $WEB_ACCESSIBLE_DIR
+done
+exit
+<<'COMMENT'
+#################################
+# subtype
+#################################
+# 3. Profiling 
+# 3.1 Within
+# 3.1.1 ME vs GE correlation : Bar plot 
+echo "[INFO] Generate Bar plot for ME vs GE correlation"
+for (( k=0; k<${#type_kind[@]}; k++ )); do 
+	Rscript $bin_dir/stat_bar.r $PROF_DIR/ME_GE_MAT_PNC_${type_kind[$k]}.txt $viz_result_dir/BAR_ME_GE_PC_NC_${type_kind[$k]}.jpg "Among ME bins over threshold, PC/NC ratio with GE in ${type_kind[$k]}" 2
+	Rscript $bin_dir/stat_bar.r $PROF_DIR/ME_GE_MAT_THRESH_${type_kind[$k]}.txt $viz_result_dir/BAR_ME_GE_threshold_${type_kind[$k]}.jpg "Ratio of ME bins having CORR with GE over threshold in ${type_kind[$k]}" 1
+	cp $viz_result_dir/BAR_ME_GE_PC_NC_${type_kind[$k]}.jpg $viz_result_dir/BAR_ME_GE_threshold_${type_kind[$k]}.jpg $WEB_ACCESSIBLE_DIR
+done
+# 3.1.2 SNP vs GE correlation : Bar plot
+echo "[INFO] Generate Bar plot for SNP vs GE correlation"
+for (( k=0; k<${#type_kind[@]}; k++ )); do 
+	Rscript $bin_dir/stat_bar.r $PROF_DIR/SNP_GE_MAT_PNC_${type_kind[$k]}.txt $viz_result_dir/BAR_SNP_GE_PC_NC_${type_kind[$k]}.jpg "Among SNP bins over threshold, PC/NC ratio with GE in ${type_kind[$k]}" 2
+	Rscript $bin_dir/stat_bar.r $PROF_DIR/SNP_GE_MAT_THRESH_${type_kind[$k]}.txt $viz_result_dir/BAR_SNP_GE_threshold_${type_kind[$k]}.jpg "Ratio of SNP bins having CORR with GE over threshold in ${type_kind[$k]}" 1
+	cp $viz_result_dir/BAR_SNP_GE_PC_NC_${type_kind[$k]}.jpg $viz_result_dir/BAR_SNP_GE_threshold_${type_kind[$k]}.jpg $WEB_ACCESSIBLE_DIR
+done
+# 3.2 between
+# 3.2.1 ME DMR : Fold change -> bedgraph -> bw
+
+for (( k=0; k<${#type_kind[@]}; k++ )); do 
+	for (( l=$k+1; l<${#type_kind[@]}; l++ )); do 
+		# create subtype fold change DMR region based on 'subtype1_vs_subtype2.mr.edgeR.s.txt'
+		awk 'NR==1{next;}{print $1"\t"$2"\t"$3"\t"$(NF-3)}' $medips_from_mbd_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".mr.edgeR.p0.05.txt"  > $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.FC"
+		bedGraphToBigWig $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.FC" $REF_HUMAN_CHR_SIZE $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.FC.bw"
+
+		# copy to web accessible directory
+		cp $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.FC.bw" $WEB_ACCESSIBLE_DIR
+
+		# print UCSC url
+		echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=${type_kind[$k]}_${type_kind[$l]}_DMR%20description=${type_kind[$k]}_${type_kind[$l]}_DMR%20visibility=dense%20bigDataUrl="$WEB_ACCESSIBLE_LOC/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.FC.bw"
+	done
+done
+# 3.2.2 ME GDMR : bed -> bb
+	bedToBigBed $PROF_DIR/GDMR_kw $REF_HUMAN_CHR_SIZE $viz_result_dir/GDMR_by_kw.bb
+	
+	# copy to web accessible directory
+	cp $viz_result_dir/GDMR_by_kw.bb $WEB_ACCESSIBLE_DIR
+
+	# print UCSC url
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigBed%20name=GDMR_kw%20description=GDMR_kw%20visibility=dense%20bigDataUrl="$WEB_ACCESSIBLE_LOC/GDMR_by_kw.bb 
+
+
+# 3.2.3 ME DMR all : heatmap
+	# get top 10% by pvalue (NF -1). NF:post hoc test(0:fail 1:pass)
+	pvalue_index=`awk '{print NF-1;exit}' /data/project/mcpg/result/profile/ME_MAT.kw.sigle_diff`
+	line_num=`grep -v NaN /data/project/mcpg/result/profile/ME_MAT.kw.sigle_diff | sort -k"$pvalue_index","$pvalue_index"n | tee $viz_result_dir/ME_MAT.kw.sigle_diff.sorted | wc -l`
+	top_10_line_num=$(( $line_num / 10 ))
+
+	echo "total line : " $line_num
+	echo "10% line : " $top_10_line_num
+
+	head -n $top_10_line_num $viz_result_dir/ME_MAT.kw.single_diff.sorted > $viz_result_dir/ME_MAT.kw.single_diff.sorted.top10
+	#grep -v NaN /data/project/mcpg/result/profile/ME_matrix.kw.sigle_diff | awk '{print NF-1;exit}' | xargs -I {} sort -k{},{}n /data/project/mcpg/result/profile/ME_matrix.kw.sigle_diff
+	# get
+
+	# create heatmap
+	Rscript $bin_dir/make_heatmap_flex.r "$viz_result_dir/ME_matrix.kw.sigle_diff.sorted.top10" `my_join "," ${mbd_type_list[@]}` $sample_num `my_join "," ${TYPE_LEN[@]}` 100 "$viz_result_dir/DMR_heatmap.png" "Top_10_DMRs_by_Kruscal_Wallis"
+
+	# copy to WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/DMR_heatmap.png $WEB_ACCESSIBLE_DIR
+# 3.2.4 DEG : gene list -> info link
+	for (( k=0; k<${#CEL_TYPE_KIND[@]}; k++ )); do 
+		for (( l=$k+1; l<${#CEL_TYPE_KIND[@]}; l++ )); do 
+			work_file=${CEL_TYPE_KIND[$k]}"_vs_"${CEL_TYPE_KIND[$l]}".deg"
+			
+		
+			# get deg gene list only
+			cut -f2 $cel_result_dir/$work_file > $viz_result_dir/$work_file".gene_only"
+			sh $bin_dir/create_annotation_link_html_based_on_gene_list.sh $viz_result_dir/$work_file".gene_only" > $viz_result_dir/$work_file".gene_only.annot.html"
+
+			# create annotation page for deg
+			cp $cel_result_dir/$work_file $viz_result_dir/$work_file".gene_only" $viz_result_dir/$work_file".gene_only.annot.html" $WEB_ACCESSIBLE_DIR
+		done
+	done
+
+
+exit
+# 3.2.5 GDSNP all :  dot plot
+# devide each range by relative 100 bins 
+# DONE PREVISOULY
+#awk '{interval=int(($3-$2)/100);if($4=="+"){for (i=0;i<100;i++){end=$2+interval*(i+1);start=$2+interval*i; if (end<$3){print $1"\t"start"\t"end"\t"i"\t"$7}else{print $1"\t"start"\t"$3"\t"i"\t"$7} }}else{for (i=99;i>=0;i--){end=$2+interval*(i+1);start=$2+interval*i; if (end<$3){print $1"\t"start"\t"end"\t"i"\t"$7}else{print $1"\t"start"\t"$3"\t"i"\t"$7} }} }' $human_refseq_various_ranges > $viz_result_dir/human_refseq_various_ranges.div_100
+
+echo "[INFO] Create region range dot plot for GDSNP"
+{ # create ID for stat matrix
+echo "relative_range"; 
+echo "5p";
+for ((i=1; i<99; i++)); do 
+	echo $i"%";
+done; 
+echo "3p";
+} > $viz_result_dir/prefix_percentage_ids
+
+for range in "genebody" "cpgIsland" "exon"; do 
+	# get range bins(1-100)
+	grep $range $viz_result_dir/human_refseq_various_ranges.div_100 > $viz_result_dir/temp_range_div_100
+
+	# create range stat file per sample
+	work_file=$viz_result_dir/GSNP_$range"_MAT"
+
+	echo "[INFO] Estimate relative coverage in range of all $range region"
+	echo "GDSNP_in_$range" > $work_file
+	#NOTE: USE only certain region data from GDSNP. CHECK THIS as PREVIUS DOT PLOT AS WELL : No influence single vcf file has no overlap snp.  : DONE
+	grep -w $range $PROF_DIR/GDSNP.txt | cut -f1,2,3 - | bedtools coverage -b $viz_result_dir/temp_range_div_100 -a - -counts | cut -f4,6  | sort -k1,1n | bedtools groupby -g 1 -c 2 -o sum | cut -f2 >> $work_file 
+
+	paste $viz_result_dir/prefix_percentage_ids $work_file > $viz_result_dir/GSNP_$range"_matrix4plot_merged"
+	Rscript $bin_dir/plot.r $viz_result_dir/GSNP_$range"_matrix4plot_merged" $viz_result_dir/GSNP_$range"_matrix4plot_merged.jpg"
+done
+
+# 3.2.6 GDSNP all :  bed w/ label -> bb
+	sort -k1,1 -k2,2n $PROF_DIR/GDSNP.bed | uniq > $viz_result_dir/GDSNP_sorted.bed
+	bedToBigBed $viz_result_dir/GDSNP_sorted.bed $REF_HUMAN_CHR_SIZE $viz_result_dir/GDSNP_sorted.bb
+
+	# copy BigBed to web accessible dir
+	cp $viz_result_dir/GDSNP_sorted.bb $WEB_ACCESSIBLE_DIR
+
+	# create UCSC link
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigBed%20name=GDSNP%20description=GDSNP%20visibility=pack%20bigDataUrl=$WEB_ACCESSIBLE_LOC/GDSNP_sorted.bb"
+# 3.2.7 DMR region stat : pie chart
+	# create 3pUTR, 5pUTR, promoter, exon, intron pie chart
+	echo "[INFO] DMR region stat on bar chart"
+
+	echo -e "Region\tcounts\tsubtype_pair" > $viz_result_dir/DMR_region_stat_matrix.txt
+	echo -e "Region\tcounts\tsubtype_pair" > $viz_result_dir/DMR_cpgi_stat_matrix.txt
+
+
+
+	echo "[INFO] count number of DMR in each genomic region"
+	for (( k=0; k<${#type_kind[@]}; k++ )); do 
+		for (( l=$k+1; l<${#type_kind[@]}; l++ )); do 
+			subtype_pair=""${type_kind[$k]} vs ${type_kind[$l]}"
+			#for region in "3 prime UTR" "5 prime UTR" "Promoter" "Exon" "Intron"; do
+			for region in "3utr" "5utr" "promoter" "exon" "intron"; do
+				temp_region_dmr_count=`bedtools intersect -wa -wb -a $viz_result_dir/$subtype_pair.DMR.FC -b $human_refseq_various_ranges | grep -w $region | cut -f1,2,3 | sort -k1,1 -k2,2n | uniq | wc -l`
+
+				echo -e $region"\t"$temp_region_dmr_count"\t"$subtype_pair >> $viz_result_dir/DMR_region_stat_matrix.txt
+			done
+				# create cpg_island, cpg_shore, cpg_shelf
+			for region in "CpG Island" "CpGI Shore" "CpGI Shelf"; do
+				temp_region_dmr_count=`bedtools intersect -wa -wb -a $viz_result_dir/$subtype_pair.DMR.FC -b $human_refseq_various_ranges | grep -w $region | cut -f1,2,3 | sort -k1,1 -k2,2n | uniq | wc -l`
+				echo -e $region"\t"$temp_region_dmr_count"\t"$subtype_pair >> $viz_result_dir/DMR_cpgi_stat_matrix.txt
+			done
+		done
+	done
+
+	# draw pie chart
+	echo "[INFO] Draw bar chart"
+	Rscript $bin_dir/piechart.r $viz_result_dir/DMR_region_stat_matrix.txt $viz_result_dir/DMR_region_stat_barplot.jpg "Number of differentially methylated bins"
+	Rscript $bin_dir/piechart.r $viz_result_dir/DMR_cpgi_stat_matrix.txt $viz_result_dir/DMR_cpgi_stat_barplot.jpg "Number of differentially methylated bins"
+
+	cp $viz_result_dir/DMR_region_stat_barplot.jpg $viz_result_dir/DMR_cpgi_stat_barplot.jpg $WEB_ACCESSIBLE_DIR
+COMMENT
+# 3.2.8 GDSNP region stat : barplot
+	echo "[INFO] GDSNP region stat on bar chart"
+	echo -e "Region\tcounts\tSubtype" > $viz_result_dir/GDSNP_RNG_STAT_MAT.txt
+	echo -e "Region\tcounts\tSubtype" > $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt
+	echo -e "Region\tcounts\tSubtype" > $viz_result_dir/GDSNP_ALL_STAT_MAT.txt
+	sort -k1,1 -k2,2n $PROF_DIR/GDSNP.bed | uniq > $viz_result_dir/GDSNP_sorted.bed
+	for (( k=0; k<${#type_kind[@]}; k++ )); do 
+		#for region in "3'UTR" "5'UTR" "Promoter" "Exon" "Intron" "Genebody"; do
+		for region in "3utr" "5utr" "promoter" "exon" "intron" "genebody"; do
+			temp_region_gdsnp_count=`bedtools intersect -wa -wb -a $viz_result_dir/GDSNP_sorted.bed -b $human_refseq_various_ranges | grep -w $region | grep -w ${type_kind[$k]} | cut -f1,2,3 | sort -k1,1 -k2,2n | uniq | wc -l`
+
+			echo -e $region"\t"$temp_region_gdsnp_count"\t"${type_kind[$k]} >> $viz_result_dir/GDSNP_RNG_STAT_MAT.txt
+			echo -e $region"\t"$temp_region_gdsnp_count"\t"${type_kind[$k]} >> $viz_result_dir/GDSNP_ALL_STAT_MAT.txt
+		done
+
+		for region in "CpG Island" "CpGI Shelf" "CpGI Shore"; do 
+			temp_region_gdsnp_count=`bedtools intersect -wa -wb -a $viz_result_dir/GDSNP_sorted.bed -b $human_refseq_various_ranges | grep -w $region | grep -w ${type_kind[$k]} | cut -f1,2,3 | sort -k1,1 -k2,2n | uniq | wc -l`
+			echo -e $region"\t"$temp_region_gdsnp_count"\t"${type_kind[$k]} >> $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt
+			echo -e $region"\t"$temp_region_gdsnp_count"\t"${type_kind[$k]} >> $viz_result_dir/GDSNP_ALL_STAT_MAT.txt
+		done
+	done
+
+	# draw pie chart
+	echo "[INFO] Draw bar chart"
+	Rscript $bin_dir/piechart.r $viz_result_dir/GDSNP_RNG_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_RNG.pdf "Number of tumor subtype specific mutation"
+	Rscript $bin_dir/piechart.r $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_CPGs.pdf "Number of tumor subtype specific mutation"
+	Rscript $bin_dir/barplot.r $viz_result_dir/GDSNP_ALL_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_ALL.pdf "Number of tumor subtype specific mutation"
+
+<<'COMMENT'
+	cp $viz_result_dir/BAR_GDSNP_RNG.jpg $viz_result_dir/GDSNP_RNG_STAT_MAT.txt $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt $viz_result_dir/GDSNP_ALL_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_ALL.jpg $viz_result_dir/BAR_GDSNP_CPGs.jpg $WEB_ACCESSIBLE_DIR
+exit
+# 3.2.9 DMR & DEG , GDMR & GDEG : Bar plot 
+	# (1) merge DMR methylation values(from two subtypes) as single
+	# (2) merge DEG expression values(from two subtypes) as single_stat.r
+	# (3) compute correlation 
+
+	# DMR & DEG
+	for (( k=0; k<${#type_kind[@]}; k++ )); do 
+		for (( l=$k+1; l<${#type_kind[@]}; l++ )); do 
+
+			subtype_pair=${type_kind[$k]}"_"${type_kind[$l]}
+			echo "[INFO] Merging GE & ME values in $subtype_pair to estimate correlation"
+
+			# dmr file 
+			dmr_prefix=${type_kind[$k]}" vs "${type_kind[$l]}
+			dmr_file=$medips_from_mbd_result_dir/$dmr_prefix".mr.edgeR.p0.05.txt"
+
+			# deg file 
+			cel_prefix=${CEL_TYPE_KIND[$k]}" vs _"${CEL_TYPE_KIND[$l]}
+			deg_file=$cel_result_dir/$cel_prefix".deg"
+
+			# work files
+			work_file=$viz_result_dir/DMR_DEG_MGD_${type_kind[$k]}
+			work_file2=$viz_result_dir/DMR_DEG_MGD_${type_kind[$l]}
+
+			# get DMR position & check if genes is deg_file
+			cut -f1,2,3 $dmr_file > $viz_result_dir/temp_dmr_loc.txt
+
+			# merge two file	
+			#for temp_file in $work_file $work_file2; do
+			for temp_num in $k $l; do
+				temp_file=$viz_result_dir/DMR_DEG_MGD_${type_kind[$temp_num]}
+				awk -v input_file=$deg_file 'BEGIN { while ((getline < input_file ) > 0) data[$2]="1";}NR==1{for(i=1;i++;i<NF){ if($i=="gene_symbol"){temp=i;next;}; }; } {if(data[$temp]) print $0;}' $PROF_DIR/ME_GE_MGD_${type_kind[$temp_num]}| bedtools intersect -wa -wb -a $viz_result_dir/temp_dmr_loc.txt -b - | cut -f4- > $temp_file
+				awk -v class_sample_num=${TYPE_LEN[$temp_num]} '{for(i=1; i<class_sample_num; i++){printf "%s\t", $(3+i)};print $(3+i);}' $temp_file  > $temp_file"_ME"
+				awk -v class_sample_num=${TYPE_LEN[$temp_num]} '{for(i=1; i<class_sample_num; i++){printf "%s\t", $(3+class_sample_num+6+i)};print $(3+class_sample_num+4+i);}' $temp_file > $temp_file"_GE"
+			done
+
+			cut -f1,2,3 $work_file > $viz_result_dir/temp_prefix.txt
+			awk -v class_sample_num=${TYPE_LEN[$k]} '{for(i=1; i<6; i++){printf "%s\t", $(3+class_sample_num+i)};print $(3+class_sample_num+i);}' $work_file > $viz_result_dir/temp_middle.txt
+
+			DMR_DEG_ME_GE_MGD=$viz_result_dir/DMR_DEG_MGD_ME_GE_$subtype_pair
+			paste $viz_result_dir/temp_prefix.txt $work_file"_ME" $work_file2"_ME" $viz_result_dir/temp_middle.txt $work_file"_GE" $work_file2"_GE" > $DMR_DEG_ME_GE_MGD
+
+			# compute correlation between all ME in DMRs and GE in DEGs
+			echo "[INFO] compute correlation for subtype "${type_kind[$k]}" and "${type_kind[$l]}" DMR-DEG"
+			TMP_MGD_LEN=$(( ${TYPE_LEN[$k]} + ${TYPE_LEN[$l]} ))
+
+			echo -n "" > $viz_result_dir/DMR_DEG_MGD_ME_GE_CORR_$subtype_pair
+			cat $DMR_DEG_ME_GE_MGD | parallel --no-notice --pipe -j"$NUM_CPUS" -L1000000 -k python $bin_dir/pearson.py - 3 $((9 + $TMP_MGD_LEN )) $TMP_MGD_LEN >> $viz_result_dir/DMR_DEG_MGD_ME_GE_CORR_$subtype_pair
+
+			#################################################################
+			# compute % of over correlation threshold
+			#################################################################
+			echo "[INFO] Compute % of correlation over threshold"
+			python $bin_dir/profile_ME_GE.py $viz_result_dir/DMR_DEG_MGD_ME_GE_CORR_$subtype_pair $viz_result_dir"/DMR_DEG_stat_"$subtype_pair".txt" $TMP_MGD_LEN $corr_threshold $viz_result_dir/DMR_DEG_ME_GE_MAT_THRESH_$subtype_pair".txt" $viz_result_dir/DMR_DEG_ME_GE_MAT_PNC_$subtype_pair".txt"
+		
+			# draw plot
+			echo "[INFO] Draw bar plots"
+			Rscript $bin_dir/stat_bar.r $viz_result_dir/DMR_DEG_ME_GE_MAT_PNC_$subtype_pair".txt" $viz_result_dir/BAR_DMR_DEG_ME_GE_MAT_PNC_$subtype_pair".jpg" "Among DMR DEG interseced bins over threshold, PC/NC ratio with GE in $subtype_pair" 2
+			Rscript $bin_dir/stat_bar.r $viz_result_dir/DMR_DEG_ME_GE_MAT_THRESH_$subtype_pair".txt" $viz_result_dir/BAR_DMR_DEG_ME_GE_MAT_THRESH_$subtype_pair".jpg" "Ratio of DMR DEG intersected bins having CORR with GE over threshold in $subtype_pair" 1
+
+			# copy to WEB_ACCESSIBLE_DIR
+			cp $viz_result_dir/DMR_DEG_stat_* $viz_result_dir/BAR_DMR_DEG_ME_GE_MAT_PNC_$subtype_pair".jpg" $viz_result_dir/BAR_DMR_DEG_ME_GE_MAT_THRESH_$subtype_pair".jpg" $WEB_ACCESSIBLE_DIR
+		done
+	done
+
+	# GDMR & GDEG
+	# get GDMR and GDEG's ME GE values
+	GDEG_gene_list=$PROF_DIR/GDEG_by_kw_genelist
+	awk -v input_file=$GDEG_gene_list 'BEGIN { while ((getline < input_file ) > 0) data[$1]="1";}NR==1{for(i=1;i++;i<NF){ if($i=="gene_symbol"){temp=i;next;}; }; } {if(data[$temp]) print $0;}' $PROF_DIR/ME_GE_MGD.txt| bedtools intersect -wa -wb -a $PROF_DIR/GDMR_kw -b - | cut -f4- > $viz_result_dir/GDMR_GDEG_ME_GE_MGD.txt
+
+	echo -n "" > $viz_result_dir/GDMR_GDEG_MGD_ME_GE_CORR_all.txt
+	cat $viz_result_dir/GDMR_GDEG_ME_GE_MGD.txt| parallel --no-notice --pipe -j"$NUM_CPUS" -L1000000 -k python $bin_dir/pearson.py - 3 $((9 + $sample_num )) $sample_num >> $viz_result_dir/GDMR_GDEG_MGD_ME_GE_CORR_all.txt
+
+
+	#################################################################
+	# compute % of over correlation threshold
+	#################################################################
+	echo "[INFO] Compute % of correlation over threshold"
+	python $bin_dir/profile_ME_GE.py $viz_result_dir/GDMR_GDEG_MGD_ME_GE_CORR_all.txt $viz_result_dir"/GDMR_GDEG_MGD_ME_GE_stat.txt" $sample_num $corr_threshold $viz_result_dir/GDMR_GDEG_ME_GE_MAT_THRESH".txt" $viz_result_dir/GDMR_GDEG_ME_GE_MAT_PNC".txt"
+
+	# draw plot
+	echo "[INFO] Draw bar plots"
+	Rscript $bin_dir/stat_bar.r $viz_result_dir/GDMR_GDEG_ME_GE_MAT_PNC".txt" $viz_result_dir/BAR_GDMR_GDEG_ME_GE_MAT_PNC".jpg" "Among GDMR GDEG interseced bins over threshold, PC/NC ratio with GE in all subtypes" 2
+	Rscript $bin_dir/stat_bar.r $viz_result_dir/GDMR_GDEG_ME_GE_MAT_THRESH".txt" $viz_result_dir/BAR_GDMR_GDEG_ME_GE_MAT_THRESH".jpg" "Ratio of GDMR GDEG intersected bins having CORR with GE over threshold in all subtypes" 1
+
+	# copy to WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/GDMR_GDEG_MGD_ME_GE_stat.txt $viz_result_dir/BAR_GDMR_GDEG_ME_GE_MAT_PNC".jpg" $viz_result_dir/BAR_GDMR_GDEG_ME_GE_MAT_THRESH".jpg" $WEB_ACCESSIBLE_DIR
+
+# 3.2.10 DSNP & DEG , GDSNP & GDEG : Bar plot
+	# DSNP & DEG
+	for (( i=0; i<${#type_kind[@]}; i++ )); do 
+		for (( j=$i+1; j<${#type_kind[@]}; j++ )); do 
+			TYPE_PAIR=${type_kind[$i]}_${type_kind[$j]}
+			TMP_MGD_LEN=$(( ${TYPE_LEN[$i]} + ${TYPE_LEN[$j]} ))
+
+			DSNP_DEG_CORR=$PROF_DIR/DSNP_DEG_CORR_$TYPE_PAIR".txt"
+
+			echo "[INFO] Compute % of correlation over threshold"
+			python $bin_dir/profile_AF_GE.py $DSNP_DEG_CORR $viz_result_dir"/DSNP_DEG_MGD_AF_GE_stat_"$TYPE_PAIR".txt" $TMP_MGD_LEN $corr_threshold $viz_result_dir/DSNP_DEG_AF_GE_MAT_THRESH_$TYPE_PAIR".txt" $viz_result_dir/DSNP_DEG_AF_GE_MAT_PNC_$TYPE_PAIR".txt"
+
+			# draw plot
+			echo "[INFO] Draw bar plots"
+			Rscript $bin_dir/stat_bar.r $viz_result_dir/DSNP_DEG_AF_GE_MAT_PNC_$TYPE_PAIR".txt" $viz_result_dir/BAR_DSNP_DEG_AF_GE_MAT_PNC_$TYPE_PAIR".jpg" "Among DSNP DEG interseced bins over threshold, PC/NC ratio with GE in $TYPE_PAIR" 2
+			Rscript $bin_dir/stat_bar.r $viz_result_dir/DSNP_DEG_AF_GE_MAT_THRESH_$TYPE_PAIR".txt" $viz_result_dir/BAR_DSNP_DEG_AF_GE_MAT_THRESH_$TYPE_PAIR".jpg" "Ratio of DSNP DEG intersected bins having CORR between AF and GE over threshold in $TYPE_PAIR" 1
+
+			# copy to WEB_ACCESSIBLE_DIR
+			cp $viz_result_dir/DSNP_DEG_MGD_AF_GE_stat_$TYPE_PAIR".txt" $viz_result_dir/BAR_DSNP_DEG_AF_GE_MAT_THRESH_$TYPE_PAIR".jpg" $viz_result_dir/BAR_DSNP_DEG_AF_GE_MAT_PNC_$TYPE_PAIR".jpg" $WEB_ACCESSIBLE_DIR
+		done
+	done
+
+	# GDSNP & GDEG 
+	cut -f5- $PROF_DIR/GDEG_GDSNP.txt > $viz_result_dir/GDEG_GDSNP_CORR.txt
+	GDEG_GDSNP_CORR=$viz_result_dir/GDEG_GDSNP_CORR.txt
+
+	echo "[INFO] Compute % of correlation over threshold"
+	python $bin_dir/profile_AF_GE.py $GDEG_GDSNP_CORR $viz_result_dir"/GDEG_GDSNP_MGD_AF_GE_stat.txt" $sample_num $corr_threshold $viz_result_dir/GDEG_GDSNP_AF_GE_MAT_THRESH.txt $viz_result_dir/GDEG_GDSNP_AF_GE_MAT_PNC.txt
+
+	# draw plot
+	echo "[INFO] Draw bar plots"
+	Rscript $bin_dir/stat_bar.r $viz_result_dir/GDEG_GDSNP_AF_GE_MAT_PNC.txt $viz_result_dir/BAR_GDEG_GDSNP_AF_GE_MAT_PNC.jpg "Among GDSNP GDEG interseced bins over threshold, PC/NC ratio with GE in all subtypes" 2
+	Rscript $bin_dir/stat_bar.r $viz_result_dir/GDEG_GDSNP_AF_GE_MAT_THRESH.txt $viz_result_dir/BAR_GDEG_GDSNP_AF_GE_MAT_THRESH.jpg "Ratio of GDSNP GDEG intersected bins having CORR between AF and GE over threshold in all subtypes" 1
+
+	# copy to WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/GDEG_GDSNP_MGD_AF_GE_stat.txt $viz_result_dir/BAR_GDEG_GDSNP_AF_GE_MAT_PNC.jpg $viz_result_dir/BAR_GDEG_GDSNP_AF_GE_MAT_THRESH.jpg $WEB_ACCESSIBLE_DIR
+COMMENT
+
+# create index page
+sh $bin_dir/gnu-mirror-index-creator.sh $WEB_ACCESSIBLE_DIR /mcpg/ "147.46.15.115"
+#################################
+# end
+#################################
+<
