@@ -19,7 +19,7 @@ title <- args[6]
 
 #data <- as.matrix(read.table(input, sep="\t",header=F)[,(ini_start):(range+ini_start-1)])
 #data <- as.matrix(read.table(input, sep="\t", header=T))
-data_table <- read.table(input,sep="\t",header=T)
+data_table <- read.table(input,sep="\t",header=F)
 
 #data <- log(as.matrix(data_table[,-c(1:3)]))
 data <- as.matrix(data_table[,-c(1)])

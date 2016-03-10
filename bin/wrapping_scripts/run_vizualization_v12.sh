@@ -30,6 +30,24 @@ ME_GE_COR_all_merged_THRESH=$integ_result_dir/ME_GE_COR_MGD_THRESH.txt
 
 # functions
 function my_join { local IFS="$1"; shift; echo "$*"; }
+
+
+
+# functions
+function binning_value {
+		local local_interval=$1
+		local local_max=$2
+		local local_value_column=$3
+		local level_file=$4
+
+		awk -v interval=$local_interval -v max_range=$local_max -v value_column=$local_value_column '{ ind=int($value_column/interval)*interval;
+								if($value_column>max_range){ind=max_range;}; value[ind] = value[ind] + 1;}
+								END{for (v in value) {print v,value[v]}
+							}' $level_file  | sort -k1,1g 
+}
+
+
+
 ####################################################################################
 # 0. set parameters
 ####################################################################################
@@ -553,6 +571,7 @@ circos -conf $temp_circos_file -outputdir $circos_dir -outputfile "all"
 
 COMMENT_TEMP
 
+<<'COMMENT_TEMP'
 ########################################
 # DMR : Fold change -> bedgraph -> bw
 ########################################
@@ -594,7 +613,7 @@ else
 	echo "infinium"
 
 fi
-
+COMMENT_TEMP
 ########################################
 # GDMR : bed -> bb
 ########################################
@@ -710,9 +729,9 @@ for range in "genebody" "cpgIsland" "exon"; do
 	paste $viz_result_dir/prefix_percentage_ids $work_file_for_GDSNP > $viz_result_dir/GDSNP_$range"_matrix4plot_merged"
 	# line plot
 	$NEW_R_DIR/Rscript $bin_dir/plot.r $viz_result_dir/GDSNP_$range"_matrix4plot_merged" $viz_result_dir/GDSNP_$range"_matrix4plot_merged.png" 
-
+COMMENT_TEMP
 	snp_file_extension=$(echo `basename \${mu_list[0]}` | awk -F . '{if(NF>1) {print $NF}}')
-
+<<'COMMENT_TEMP'
 	# for DSNP
 	paste_list_all=()
 	for (( k=0; k<${#type_kind[@]}; k++ )); do 
@@ -761,7 +780,6 @@ for range in "genebody" "cpgIsland" "exon"; do
 
 	cp $viz_result_dir/SNP_*.png $WEB_ACCESSIBLE_DIR
 done
-COMMENT_TEMP
 
 # GDSNP all :  bed w/ label -> bb
 	sort -k1,1 -k2,2n $integ_result_dir/GDSNP.bed | uniq > $viz_result_dir/GDSNP_sorted.bed
@@ -802,6 +820,7 @@ COMMENT_TEMP
 
 	cp $vis_result_dir/GDSNP_boxplot_genomic.png $viz_result_dir/GDSNP_boxplot_cpgi.png $WEB_ACCESSIBLE_DIR
 
+COMMENT_TEMP
 
 <<'COMMENT'
 # GDSNP region stat : barplot
@@ -832,4 +851,426 @@ COMMENT_TEMP
 #	Rscript $bin_dir/barplot.r $viz_result_dir/GDSNP_ALL_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_ALL.png "Number of tumor subtype specific mutation"
 
 	cp $viz_result_dir/BAR_GDSNP_RNG.png $viz_result_dir/GDSNP_RNG_STAT_MAT.txt $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_CPGs.png $WEB_ACCESSIBLE_DIR
+COMMENT
+
+## case2
+###################################################################################
+### Extract single cpg site specific normalized methylation level
+###################################################################################
+					#cat $hg19_reference_sequence | $bin_dir/extract_cpg_site_from_fasta > $region_info_dir/hg19_cpg_site.bed
+
+NUM_CPUS=3 # NOTE: below takes 10GB per CPU.
+# create cpgsite me level & snp exist cpgsite me level 
+for deg_pair in "all_gene"; do # "p_cut_genes" "lu_vs_baa.deg" "lu_vs_bab.deg" "baa_vs_bab.deg" "GDEG"; do 
+	for region in  "whole_genome" ; do #cpgShore" "cpgi"; do # "whole_genome" "Intron" "Exon" "Promoter" "Genebody" "TFBS" "Promoter_Genebody"; do #
+		# set region information
+		# NOTE : FILE NAME DEPENDENCY!!!
+		# promotor : lu_vs_baa.deg.list_Promoter_Refseq.bed
+		# tbfs in promotor : lu_vs_baa.deg.list_Promoter_Refseq.bed_sequence.fa_match_minSUM_good.txt
+		# promoter and genebody : lu_vs_baa.deg.list_Promoter_Genebody_Refseq.bed
+<<'COMMENT'
+		if [ $deg_pair == "all_gene" ]; then # not consider GE, just SNP & ME
+			if [ $region == "whole_genome" ]; then
+				region_file=""
+			elif [ $region == "TFBS" ]; then
+				continue
+			elif [ $region == "cpgShore" ] || [ $region == "cpgi" ]; then
+				region_file=$region_info_dir"$region"".bed"
+			else
+				region_file=$region_info_dir"$region""_Refseq.bed"
+			fi
+		elif [ $deg_pair == "p_cut_genes" ]; then 
+			if [ $region == "whole_genome" ]; then
+				continue
+			elif [ $region == "cpgShore" ] || [ $region == "cpgi" ] || [ $region == "TFBS" ]; then
+				continue
+			else
+				region_file=$region_info_dir"/p_cut_gene_related/p_cut_genes_"$region"_Refseq.bed"
+			fi
+		else # consider SNP, ME, GE together, so consider degs
+			if [ $region == "cpgShore" ] || [ $region == "cpgi" ]; then
+				# These regions are not related with degs, only consider when deg_pair is all_gene and skip for others
+				continue
+			elif [ $region == "TFBS" ]; then
+				echo "[INFO] This is TFBS, so need to merge the region information"
+				info_file=$deg_with_regions_dir"$deg_pair"".list_Promoter_Refseq.bed_sequence.fa_match_minSUM_good.txt.bed.sorted"
+				TFBS_info_file_merged=$info_file".merged"
+
+				# get TFBS merged region since TFBS overlaps themselves
+				# NOTE : !!! THIS IS ONLY NEEDE ONE TIME, SO COMMENTED !!!
+#				cut -f1,2,3,4 $info_file | sort -k1,1 -k2,2n | uniq | bedtools merge -c 4 -o distinct -i - > $TFBS_info_file_merged
+				region_file=$TFBS_info_file_merged
+			else
+				region_file=$deg_with_regions_dir"$deg_pair"".list_"$region"_Refseq.bed"
+			fi 
+		fi
+COMMENT
+		region_file=""
+		echo "[INFO] Region file : $region_file"
+		for metric in "rms"; do # "rms"; do #rms
+
+			# variables
+
+			if [ "$me_data_type" -eq "0" ]; then	# MeDIP/MBD
+				if [ $metric == "cnt" ]; then 
+					value_column=4; interval=1; max=30
+				elif [ $metric == "rms" ]; then
+					value_column=5; interval=1; max=20
+				fi
+			elif [ "$me_data_type" -eq "3" ]; then # BS-seq
+				value_column=5; interval=5; max=100
+			fi
+
+
+			category_pair=$deg_pair"_"$region"_"$metric"_"$interval"_"$max
+		
+			table_for_boxplot=$viz_result_dir/"table_for_boxplot_"$category_pair
+		
+			# create table for box plot
+			echo -e "Subtype\tDNA_methylation_level\tMutation_rate" > $table_for_boxplot
+
+<<'COMMENT'
+			class_mutation_rate_table_list=()
+			for ((k=0;k<${#type_kind[@]};k++)); do
+				temp_calss_mutation_rate_table=$viz_result_dir"/mutation_rate_table_"${type_kind[$k]}"_"$category_pair
+				echo -n "" > $temp_calss_mutation_rate_table
+				class_mutation_rate_table_list+=($temp_calss_mutation_rate_table)
+			done
+COMMENT
+
+<<'COMMENT'
+			lu_mutation_rate_table=$vizs_result_dir/"mutation_rate_table_lu_"$category_pair
+			baa_mutation_rate_table=$viz_result_dir/"mutation_rate_table_baa_"$category_pair
+			bab_mutation_rate_table=$viz_result_dir/"mutation_rate_table_bab_"$category_pair
+COMMENT
+		<<'COMMENT'
+			# create empty subtype mutation rate table
+			echo -n "" > $lu_mutation_rate_table
+			echo -n "" > $baa_mutation_rate_table
+			echo -n "" > $bab_mutation_rate_table
+COMMENT
+
+			# create cpgsite me level & snp exist cpgsite me level 
+			count=0
+			echo "[INFO] Create cpgsite me level file & snp exist cpgsite me level file"
+			for((i=0;i<${#me_list[@]};i++)); do 
+
+				echo "[INFO] Currently processing $i sample"
+				temp_filename_only=`basename \${me_list[$i]}`
+    		met_level_file=$me_result_dir/$temp_filename_only".met_level"
+				met_level_file_only=$temp_filename_only".met_level"
+
+
+    		snp_temp_filename_only=`basename \${mu_list[\$i]}`
+    		snp_temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
+    
+				if [ "$mu_data_type" -eq "0" ]; then
+      		snp_file=$mu_result_dir/$snp_temp_filename_only".vcf.bed"
+    		elif [ "$mu_data_type" -eq "1" ]; then
+      		snp_file=$mu_result_dir/$snp_temp_filename_only_wo_extension"_Aligned.out.split.filtered.vcf.bed"
+    		else
+      		snp_file=""
+    		fi
+
+				snp_filename_only=`basename $snp_file`
+
+
+				cpgsite_me_level=$viz_result_dir/$met_level_file_only".cpg_site_me_level_"$category_pair
+				snp_exist_cpgsite_me_level=$viz_result_dir/$met_level_file_only".snp_exist_cpg_site_me_level_"$category_pair
+				subtype=${type_list[$i]}
+
+<<'COMMENT'
+				# skip samples depends on deg pair
+				if [ $(check_sample_in_list $deg_pair $subtype) == "continue" ]; then 
+					continue 
+				fi
+COMMENT
+		
+				# extract cpg site ME level, extract snp exist cpg site me level 
+				if [ $region == "whole_genome" ]; then
+					echo "here"
+					tail -n+2 $met_level_file | bedtools intersect -wb -wa -a - -b $HUMAN_HG19_CPGSITE | awk -v value_column=$value_column '{OFS="\t"; print $6,$7,$8,$value_column}' | tee $cpgsite_me_level | bedtools intersect -wa -wb -a - -b $snp_file > $snp_exist_cpgsite_me_level &
+				else
+					tail -n+2 $met_level_file | bedtools intersect -wb -wa -a - -b $HUMAN_HG19_CPGSITE | awk -v value_column=$value_column '{OFS="\t"; print $6,$7,$8,$value_column}'| bedtools intersect -wa -wb -a - -b $region_file |tee $cpgsite_me_level | bedtools intersect -wa -wb -a - -b $snp_file > $snp_exist_cpgsite_me_level &
+				fi
+				
+				let count+=1; [[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
+			done; wait
+
+			echo "[INFO] Compute mutation rate and plot"
+			count=0
+			for((i=0;i<${#me_list[@]};i++)); do 
+
+				echo "[INFO] Currently processing $i sample"
+				# filter outlier samples # NOTE: HERE JUST FOR TESTING!!!!!!!!!!!!!!!!!!!
+				#if [ $i -eq 5 ] || [ $i -eq 6 ] || [ $i -eq 7 ] || [ $i -eq 17 ] || [ $i -eq 21 ] || [ $i -eq 24 ]; then
+				#	continue
+				#fi
+
+
+				temp_filename_only=`basename \${me_list[$i]}`
+    		met_level_file=$me_result_dir/$temp_filename_only".met_level"
+				met_level_file_only=$temp_filename_only".met_level"
+
+
+    		snp_temp_filename_only=`basename \${mu_list[\$i]}`
+    		snp_temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
+    
+				if [ "$mu_data_type" -eq "0" ]; then
+      		snp_file=$mu_result_dir/$snp_temp_filename_only".vcf.bed"
+    		elif [ "$mu_data_type" -eq "1" ]; then
+      		snp_file=$mu_result_dir/$snp_temp_filename_only_wo_extension"_Aligned.out.split.filtered.vcf.bed"
+    		else
+      		snp_file=""
+    		fi
+
+				snp_filename_only=`basename $snp_file`
+
+
+				subtype=${type_list[$i]}
+
+<<'COMMENT'
+				# skip samples depends on deg pair
+				if [ $(check_sample_in_list $deg_pair $subtype) == "continue" ]; then 
+					continue 
+			        fi
+COMMENT
+
+				# for debug
+				echo "[INFO] Binning"
+				echo "[INFO] ME file : " $met_level_file
+				echo "[INFO] SNP file : " $snp_file
+				echo "[INFO] Subtype : " $subtype
+				echo "[INFO] Region : " $region
+				echo "[INFO] Metric : " $metric
+				echo "[INFO] DEG pair : " $deg_pair
+
+				cpgsite_me_level=$viz_result_dir/$met_level_file_only".cpg_site_me_level_"$category_pair
+				snp_exist_cpgsite_me_level=$viz_result_dir/$met_level_file_only".snp_exist_cpg_site_me_level_"$category_pair
+
+
+				number_of_cpgsite_per_methylation_range=$viz_result_dir/$met_level_file_only".number_of_cpgsite_per_methylation_range_"$category_pair
+				number_of_snp_exist_cpgsite_per_methylation_range=$viz_result_dir/$met_level_file_only".number_of_snp_exist_cpgsite_per_methylation_range_"$category_pair
+
+				mutation_rate_per_methylation_range=$viz_result_dir/$met_level_file_only".mutation_rate_per_methylation_range_"$subtype"_"$category_pair
+							#mutation_rate_table=$viz_result_dir/"mutation_rate_table_"$subtype"_"$category_pair
+
+				# compute mutation rate of each methylation range
+				## extract number of cpgsite per multation range
+				binning_value $interval $max 4 $cpgsite_me_level > $number_of_cpgsite_per_methylation_range &
+				binning_value $interval $max 4 $snp_exist_cpgsite_me_level  > $number_of_snp_exist_cpgsite_per_methylation_range &
+				let count+=1; [[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
+			done;wait
+
+			for((i=0;i<${#me_list[@]};i++)); do 
+
+				echo "[INFO] Currently processing $i sample"
+				# filter outlier samples # NOTE: HERE JUST FOR TESTING!!!!!!!!!!!!!!!!!!!
+				#if [ $i -eq 5 ] || [ $i -eq 6 ] || [ $i -eq 7 ] || [ $i -eq 17 ] || [ $i -eq 21 ] || [ $i -eq 24 ]; then
+				#	continue
+				#fi
+
+				temp_filename_only=`basename \${me_list[$i]}`
+    		met_level_file=$me_result_dir/$temp_filename_only".met_level"
+				met_level_file_only=$temp_filename_only".met_level"
+
+
+    		snp_temp_filename_only=`basename \${mu_list[\$i]}`
+    		snp_temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
+    
+				if [ "$mu_data_type" -eq "0" ]; then
+      		snp_file=$mu_result_dir/$snp_temp_filename_only".vcf.bed"
+    		elif [ "$mu_data_type" -eq "1" ]; then
+      		snp_file=$mu_result_dir/$snp_temp_filename_only_wo_extension"_Aligned.out.split.filtered.vcf.bed"
+    		else
+      		snp_file=""
+    		fi
+
+				snp_filename_only=`basename $snp_file`
+
+
+				subtype=${type_list[$i]}
+
+
+<<'COMMENT'
+				# skip samples depends on deg pair
+				if [ $(check_sample_in_list $deg_pair $subtype) == "continue" ]; then 
+					continue 
+			        fi
+COMMENT
+				# for debug
+				echo "[INFO] Mutation rate computing"
+				echo "[INFO] ME file : " $met_level_file
+				echo "[INFO] SNP file : " $snp_file
+				echo "[INFO] Subtype : " $subtype
+				echo "[INFO] Region : " $region
+				echo "[INFO] Metric : " $metric
+				echo "[INFO] DEG pair : " $deg_pair
+
+
+				number_of_cpgsite_per_methylation_range=$viz_result_dir/$met_level_file_only".number_of_cpgsite_per_methylation_range_"$category_pair
+				number_of_snp_exist_cpgsite_per_methylation_range=$viz_result_dir/$met_level_file_only".number_of_snp_exist_cpgsite_per_methylation_range_"$category_pair
+
+				mutation_rate_per_methylation_range=$viz_result_dir/$met_level_file_only".mutation_rate_per_methylation_range_"$subtype"_"$category_pair
+							#mutation_rate_table=$viz_result_dir/"mutation_rate_table_"$subtype"_"$category_pair
+
+
+
+				## compute mutation rate
+				join -a1 -a2 <(sort -k1,1 $number_of_cpgsite_per_methylation_range) <(sort -k1,1 $number_of_snp_exist_cpgsite_per_methylation_range) | sort -k1,1n | awk '{OFS="\t"; if($3=="") $4=0; print $1,$3/$2 }' > $mutation_rate_per_methylation_range
+
+				## plot mutation rate
+							#echo "[INFO] out file" $mutation_rate_per_methylation_range".jpg"
+							#Rscript $bin_dir/line_plot_with_two_inputs.r $mutation_rate_per_methylation_range $mutation_rate_per_methylation_range".jpg"
+
+				# create table for ttest	
+							#cut -f2 $mutation_rate_per_methylation_range | awk -f $bin_dir/transpose.awk >> $mutation_rate_table
+							#for(i in 1:ncol(lu_data)){print(i);print(t.test(lu_data[,i],baa_data[,i]))}
+		
+				# create boxplot data	
+				awk -v subtype=$subtype '{OFS="\t";print subtype, $1, $2}' $mutation_rate_per_methylation_range >> $table_for_boxplot
+			done
+			# draw boxplot
+			$NEW_R_DIR/Rscript $bin_dir/mu_rate_boxplot.r $table_for_boxplot $table_for_boxplot".png"
+
+		done
+	done
+done
+
+
+<<'COMMENT'
+################################################################
+# mutation rate from bs 
+################################################################
+
+# all cpg site info file
+# HCC70_TGACCA_L001_R1_001_val_1.fq_bismark_pecpg.raw.sorted.filtered..coverage.bedgraph
+
+bs_region=/data/project/mcpg/lib/region_info/bs_seq_target_region_sorted.txt
+
+# bs_me file example
+# mDAmB_231_GGCTAC_L002_R1_001_val_1.fq_bismark_pe.sorted.sam.bed
+
+
+NUM_CPUS=8
+for region in "whole_bs_region"; do #"cpgShore" "cpgi" "Intron" "Promoter" "Genebody" "Exon" "Promoter_Genebody"; do
+	echo "[INFO] Create cpgsite me level file & snp exist cpgsite me level file"
+
+
+	count=0
+	for((i=0;i<${#bs_r1_list[@]};i++)); do 
+
+		# variables
+
+		# bs_me
+		input_fq1_filename_only=`basename \${bs_r1_list[$i]}`
+		file_extention=$(echo $input_fq1_filename_only |awk -F . '{if (NF>1) {print $NF}}')
+		filename1_wo_ext=`basename $input_fq1_filename_only "."$file_extention`
+
+		bs_me_level_file=$bs_me_result_dir/$filename1_wo_ext"_val_1.fq_bismark_pe.sorted.sam.bed"
+		bs_me_filename_only=`basename \$bs_me_level_file`
+
+		# snp
+		snp_from_bs_result_dir="/data/project/breast_TF_methyl/30celline_SNP_TFBS_ME_GE/result/snp_from_bs/"
+		bam_prefix=$filename1_wo_ext"_val_1.fq_bismark_pe"
+
+		bs_snp_file=$snp_from_bs_result_dir/$bam_prefix"snp.raw.sorted.filtered.vcf"
+		bs_snp_filename_only=`basename \$bs_snp_file`
+
+		bs_cpgsite_me_level=$viz_result_dir/$bs_me_filename_only".cpg_site_me_level_"$region
+		bs_snp_exist_cpgsite_me_level=$viz_result_dir/$bs_me_filename_only".snp_exist_cpg_site_me_level_"$region
+		bs_subtype=${bs_subtype_list[$i]}
+
+
+		if [ $region == "whole_bs_region" ]; then
+			region_file=""
+		elif [ $region == "cpgShore" ] || [ $region == "cpgi" ]; then
+			region_file=$region_info_dir"$region"".bed"
+		else
+			region_file=$region_info_dir"$region""_Refseq.bed"
+		fi
+
+
+
+		# extract cpg site ME level, extract snp exist cpg site me level 
+		# NOTE : !!! THIS IS ONLY NEEDE ONE TIME, SO COMMENTED !!!
+
+		# 1. intersect bs_region + hg19 cpgsite = cpgsite in bs region [all sample same]
+		# 2. intersect bs snp file + cpgsite in bs region = snp exist cpgsite in bs region [each sample]
+		# 3. intersect 
+
+		if [ $region == "whole_bs_region" ]; then
+			more +2 $bs_me_level_file | bedtools intersect -wa -wb -a - -b $hg_cpgsite_bed | awk -v value_column=$value_column '{OFS="\t"; print $1,$2,$3,$4}' |tee $bs_cpgsite_me_level | bedtools intersect -wa -wb -a - -b $bs_snp_file > $bs_snp_exist_cpgsite_me_level &
+		else
+			more +2 $bs_me_level_file | bedtools intersect -wa -wb -a - -b $hg_cpgsite_bed | awk -v value_column=$value_column '{OFS="\t"; print $1,$2,$3,$4}'| bedtools intersect -wa -wb -a - -b $region_file |tee $bs_cpgsite_me_level | bedtools intersect -wa -wb -a - -b $bs_snp_file > $bs_snp_exist_cpgsite_me_level &
+		fi 
+		let count+=1; [[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
+	done; wait
+
+	# create table for box plot
+	table_for_boxplot=$viz_result_dir/"table_for_boxplot_"$region
+	echo -e "Subtype\tDNA_methylation_level\tMutation_rate" > $table_for_boxplot
+
+	echo "[INFO] Compute mutation rate and plot"
+	for((i=0;i<${#bs_r1_list[@]};i++)); do 
+
+		# variables
+
+
+		# bs_me
+		input_fq1_filename_only=`basename \${bs_r1_list[$i]}`
+		file_extention=$(echo $input_fq1_filename_only |awk -F . '{if (NF>1) {print $NF}}')
+		filename1_wo_ext=`basename $input_fq1_filename_only "."$file_extention`
+
+		bs_me_level_file=$bs_me_result_dir/$filename1_wo_ext"_val_1.fq_bismark_pe.sorted.sam.bed"
+		bs_me_filename_only=`basename \$bs_me_level_file`
+
+		# snp
+		snp_from_bs_result_dir="/data/project/breast_TF_methyl/30celline_SNP_TFBS_ME_GE/result/snp_from_bs/"
+		bam_prefix=$filename1_wo_ext"_val_1.fq_bismark_pe"
+
+		bs_snp_file=$snp_from_bs_result_dir/$bam_prefix"snp.raw.sorted.filtered.vcf"
+		bs_snp_filename_only=`basename \$bs_snp_file`
+
+		bs_cpgsite_me_level=$viz_result_dir/$bs_me_filename_only".cpg_site_me_level_"$region
+		bs_snp_exist_cpgsite_me_level=$viz_result_dir/$bs_me_filename_only".snp_exist_cpg_site_me_level_"$region
+		bs_subtype=${bs_subtype_list[$i]}
+
+		interval=5; max=100
+
+		# for debug
+		echo "[INFO] ME file : " $bs_me_level_file
+		echo "[INFO] SNP file : " $bs_snp_file
+		echo "[INFO] Subtype : " $bs_subtype
+		#echo "[INFO] Region : " $region
+
+		number_of_cpgsite_per_methylation_range=$viz_result_dir/$bs_me_filename_only".number_of_cpgsite_per_methylation_range_"$region
+		number_of_snp_exist_cpgsite_per_methylation_range=$viz_result_dir/$bs_me_filename_only".number_of_snp_exist_cpgsite_per_methylation_range_"$region
+
+		mutation_rate_per_methylation_range=$viz_result_dir/$bs_me_filename_only".mutation_rate_per_methylation_range_"$bs_subtype"_"$region
+
+		# compute mutation rate of each methylation range
+		## extract number of cpgsite per multation range
+		binning_value $interval $max 4 $bs_cpgsite_me_level > $number_of_cpgsite_per_methylation_range &
+		binning_value $interval $max 4 $bs_snp_exist_cpgsite_me_level  > $number_of_snp_exist_cpgsite_per_methylation_range &
+		wait
+
+		## compute mutation rate
+		join -a1 -a2 <(sort -k1,1 $number_of_cpgsite_per_methylation_range) <(sort -k1,1 $number_of_snp_exist_cpgsite_per_methylation_range) | sort -k1,1n | awk '{OFS="\t"; if($3=="") $4=0; print $1,$3/$2 }' > $mutation_rate_per_methylation_range
+
+		## plot mutation rate
+					#echo "[INFO] out file" $mutation_rate_per_methylation_range".jpg"
+					#Rscript $bin_dir/line_plot_with_two_inputs.r $mutation_rate_per_methylation_range $mutation_rate_per_methylation_range".jpg"
+
+		# create table for ttest	
+					#cut -f2 $mutation_rate_per_methylation_range | awk -f $bin_dir/transpose.awk >> $mutation_rate_table
+					#for(i in 1:ncol(lu_data)){print(i);print(t.test(lu_data[,i],baa_data[,i]))}
+
+		# create boxplot data	
+		awk -v subtype=$bs_subtype '{OFS="\t";print subtype, $1, $2}' $mutation_rate_per_methylation_range >> $table_for_boxplot
+	done
+	# draw boxplot
+	Rscript $bin_dir/draw_boxplot.R $table_for_boxplot $table_for_boxplot".jpg"
+
+done
 COMMENT

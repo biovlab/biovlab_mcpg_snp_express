@@ -218,7 +218,7 @@ if [ "$sample_format" -eq "3" ]; then # BS
 
 		methylation_level_file=$methylkit_from_bs_result_dir/$input_fq1_filename_only".met_level"
 
-		echo -e "chr\tbin_start\tbin_end\tmethyl_count\tmethyl_level" > $methylkit_from_bs_result_dir/$input_fq1_filename_only".met_level"
+		echo -e "chr\tbin_start\tbin_end\tmethyl_count\tmethyl_level" > $methylation_level_file
 
 		awk '
  				 BEGIN{FS=OFS="\t"}
