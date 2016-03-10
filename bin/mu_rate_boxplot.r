@@ -20,7 +20,7 @@ max(unlist(qu))-> up
 
 m2 + coord_cartesian(ylim=c(lo/2,up*1.05)) -> m3
 
-m3 + theme_classic() + xlab("DNA methylation level (RMS)") + ylab("Mutation rate") -> m4
+m3 + theme_classic() + xlab("DNA methylation level") + ylab("Mutation rate") -> m4
 
 m4 + guides(fill=guide_legend(title="Class")) -> m5
 
