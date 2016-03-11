@@ -8,7 +8,8 @@ declare -A exp_info
 
 # MySQL query to extract all parameters by uid 
 uid=$1
-result_dir=$WORK_DIR/$2
+result_dir=$2
+final_result_dir=$result_dir/final_result
 
 mysql_db_name=$MYSQL_DB_NAME
 mysql_user_id=$MSQL_USER_ID
@@ -20,9 +21,7 @@ mysql_host_port=$MYSQL_HOST_PORT
 echo "[INFO] PGA_UID:"$uid
 
 echo "[INFP] Create final result directory"
-#MSG/app/output
-#{work_dir}/app/output/${uid}O
-#mkdir -p 
+mkdir -p $final_result
 
 # variables
 field_name_list=()
