@@ -40,6 +40,8 @@ for sample_class in sample_class_list:
 
 
 # find GDSNP: should follow rules 1. $GDSNP_exist_pct_in_the_subtype 2. $GDSNP_exist_pct_in_others
+firstLine = merged_snp_file_fd.readline()
+
 for line in merged_snp_file_fd.readlines():
 	tokens 			= line[:-1].split('\t')
 	chr_num			= tokens[0]

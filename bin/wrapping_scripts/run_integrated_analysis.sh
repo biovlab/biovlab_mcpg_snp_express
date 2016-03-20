@@ -1,1 +1,1 @@
-run_integrated_analysis_v6.sh
+run_integrated_analysis_v8.sh

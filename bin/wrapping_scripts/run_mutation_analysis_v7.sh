@@ -8,7 +8,9 @@ source `dirname $0`/parse_exp_info.sh
 # directories
 bin_dir="$WORK_DIR/bin"
 lib_dir="$WORK_DIR/lib"
+<<'COMMENT'
 result_dir="$WORK_DIR/result"
+COMMENT
 rnaseq_result_dir=$result_dir"/mu/rna_seq"
 dnaseq_result_dir=$result_dir"/mu/dna_seq"
 array_result_dir=$result_dir"/mu/array"
@@ -463,13 +465,12 @@ COMMENT
 #####################
 elif [ $data_type -eq 0 ] ; then
 	mkdir -p $dnaseq_result_dir
-<<'COMMENT_TEMP'
 	echo "[INFO] Start DNAseq analysis"
 	
 	for (( i=0; i<${#sample_fq1_list[@]}; i++ )); do
 		bash $bin_dir/mbd_ver2.sh ${sample_fq1_list[$i]} ${sample_fq2_list[$i]} $single_pair $dnaseq_result_dir		# align by STAR, so no need to be parallelization.
 	done
-COMMENT_TEMP
+	
 	# run on multi cpu
 	# NOTE : Require 1. bam file list, 2. index of bam file "samtools index bamfile"
 	# NOTE : !!!! IF bam file list is used in mpileup, merged result is different at the result flag columns compare with one with run seperately. Only use for replicate. !!!

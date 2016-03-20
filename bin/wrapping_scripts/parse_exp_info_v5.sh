@@ -9,7 +9,9 @@ declare -A exp_info
 # MySQL query to extract all parameters by uid 
 uid=$1
 result_dir=$2
-final_result_dir=$result_dir/final_result
+final_result_root_dir=$result_dir/final_result
+final_result_web_dir="/var/www/html/biovlab_mcpg_snp_express/"$uid
+final_result_url="bhi2.snu.ac.kr/biovlab_mcpg_snp_express/"$uid
 
 mysql_db_name=$MYSQL_DB_NAME
 mysql_user_id=$MSQL_USER_ID
@@ -21,7 +23,9 @@ mysql_host_port=$MYSQL_HOST_PORT
 echo "[INFO] PGA_UID:"$uid
 
 echo "[INFP] Create final result directory"
-mkdir -p $final_result
+mkdir -p $final_result_root_dir
+mkdir -p $final_result_web_dir
+ln -s $final_result_root_dir $final_result_web_dir
 
 # variables
 field_name_list=()
@@ -284,6 +288,53 @@ echo "[INFO] Sample fq2 list: ${mu_sample_fq2_list[@]}"
 echo "[INFO] Array list: ${mu_array_list[@]}"
 echo "[INFO] Single or Pair: $mu_single_pair"
 echo "[INFO] Is array?: $mu_is_array"
+
+function my_min(){
+	local a=$1
+	local b=$2
+
+	echo $([ $a -le $b ] && echo "$a" || echo "$b")
+}
+
+
+# CPU & Memory Setting
+if [ "$ge_is_array" -eq "1" ]; then
+	max_mem=$SYS_MAX_MEM
+else
+	max_mem=$(($SYS_MAX_MEM - 16))
+fi
+
+cpu_for_mu_float=$(( $max_mem * 3 / 20 ))
+cpu_for_mu=${cpu_for_mu_float%.*}
+
+mu_cpu=`my_min $cpu_for_mu $(( $SYS_NUM_CPUS - 2))`
+
+if [ "$mu_cpu" -lt "1" ]; then
+	mu_cpu=1
+fi
+
+cpu_for_me_float=$(( $max_mem / 20 ))
+cpu_for_me=${cpu_for_me_float%.*}
+
+me_cpu=`my_min $cpu_for_me $(( $SYS_NUM_CPUS - $mu_cpu ))`
+
+if [ "$me_cpu" -lt "1" ]; then
+	me_cpu=1
+fi
+
+ge_cpu=$(( $SYS_NUM_CPUS - $mu_cpu - $me_cpu ))
+
+if [ "$ge_cpu" -lt "1" ]; then
+	ge_cpu=1
+fi
+
+echo ""
+echo "[INFO] CPU Setting info"
+echo "[INFO] Max CPUs : $SYS_NUM_CPUS"
+echo "[INFO] Max Memory : $SYS_MAX_MEM"
+echo "[INFO] GE_CPU : $ge_cpu"
+echo "[INFO] ME_CPU : $me_cpu"
+echo "[INFO] MU_CPU : $mu_cpu"
 
 
 

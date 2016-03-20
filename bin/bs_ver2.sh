@@ -8,8 +8,8 @@ input_fq2=$2
 single_pair=$3
 result_dir=$4
 #adaptor=$5
+NUM_CPUS=$5
 
-	
 # variables
 input_fq1_filename_only=`basename \$input_fq1`
 input_fq2_filename_only=`basename \$input_fq2`
@@ -38,9 +38,9 @@ COMMENT
 if [ "$single_pair" == "pair" ]; then
 	echo "[INFO] This is paired end input"
 	trim_galore --paired -o $result_dir $input_fq1 $input_fq2	
-
+#--multicore $cpus
 	# NOTE : THIS REFERENCE GENOME IS MASKED FOR ICBP TARGETED BS SEQ!!! NEED TO USE DIFFERENT ONE FOR GENERAL USEAGE
-	bismark --bam -o $result_dir $BISMARK_REF_DIR_HUMAN  -1 $result_dir/$filename1_wo_ext"_val_1.fq" -2 $result_dir/$filename2_wo_ext"_val_2.fq"
+	bismark --bam -o $result_dir $BISMARK_REF_DIR_HUMAN --multicore $NUM_CPUS -1 $result_dir/$filename1_wo_ext"_val_1.fq" -2 $result_dir/$filename2_wo_ext"_val_2.fq"
 
 	# sort sam by samtools
 	#samtools view -@ $NUM_CPUS -ubS $result_dir/$filename1_wo_ext"_val_1.fq_bismark_pe.sam" | samtools sort -@ $NUM_CPUS -m 3G  - $result_dir/$filename1_wo_ext"_val_1.fq_bismark_pe.sorted"
@@ -50,7 +50,7 @@ if [ "$single_pair" == "pair" ]; then
 else
 	echo "[INFO] This is single end input"
 	trim_galore -o $result_dir $input_fq1
-	bismark -o $result_dir $BISMARK_REF_DIR_HUMAN $result_dir/$filename1_wo_ext"_trimmed.fq" 
+	bismark -o $result_dir $BISMARK_REF_DIR_HUMAN --multicore $NUM_CPUS $result_dir/$filename1_wo_ext"_trimmed.fq" 
 
 	# sort sam by samtools
 	samtools sort -@ $NUM_CPUS -m 3G $result_dir/$filename1_wo_ext"_trimmed.fq_bismark_bt2_pe.bam" $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted"

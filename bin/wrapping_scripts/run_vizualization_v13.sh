@@ -4,9 +4,13 @@ source `dirname $0`/../../env.sh
 # parse experiment information
 source `dirname $0`/parse_exp_info.sh
 
+NUM_CPUS=$SYS_NUM_CPUS
+
 # directories
 bin_dir="$WORK_DIR/bin"
+<<'COMMENT'
 result_dir="$WORK_DIR/result"
+COMMENT
 #profile_result_dir="$WORK_DIR/profile"
 integ_result_dir=$result_dir"/integrated"
 viz_result_dir=$result_dir"/visualization"
@@ -224,9 +228,9 @@ echo "[INFO] Start visualizing results"
 for (( i=0; i<${#ge_list[@]}; i++ )); do 
 	# copy to web accessible directory
 	# TODO :  this may be not necessary cuz already we are in the web accessible dir
-	cp $ge_result_dir/`basename \${ge_list[$i]}`.bw $WEB_ACCESSIBLE_DIR
+	cp $ge_result_dir/`basename \${ge_list[$i]}`.bw $final_result_dir
 	# print UCSC url
-	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=test_SNP%20description=test2SNP%20visibility=dense%20bigDataUrl=$WEB_ACCESSIBLE_LOC/${ge_list[$i]}.bw"
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=test_SNP%20description=test2SNP%20visibility=dense%20bigDataUrl=$final_result_url/${ge_list[$i]}.bw"
 done
 
 
@@ -247,17 +251,17 @@ if [ "$me_data_type" -eq "1" ]; then # MBD
 			awk 'NR==1{next;}{print}' $met_level_file | cut -f1,2,3,5 | bedtools intersect -a - -b $REF_HUMAN_GENOME_100_BIN_BED -sorted > $viz_result_dir/$temp_filename_only".met_level.bed" ;
 			$bin_dir/bedGraphToBigWig $viz_result_dir/$temp_filename_only".met_level.bed" $REF_HUMAN_CHR_SIZE $viz_result_dir/$temp_filename_only".met_level.bw";
 
-			cp $viz_result_dir/$temp_filename_only".met_level.bw" $WEB_ACCESSIBLE_DIR;
+			cp $viz_result_dir/$temp_filename_only".met_level.bw" $final_result_dir;
 			# print UCSC url
-			echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl=$WEB_ACCESSIBLE_LOC/"$temp_filename_only".met_level.bw";
+			echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl=$final_result_url/"$temp_filename_only".met_level.bw";
 		} &
 		let count+=1
 		[[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
 	done; wait
 
 elif [ "$me_data_type" -eq "2" ]; then # BS
-	ls $methylkit_from_bs_result_dir/*.sorted.bw | xargs -I {} cp {} $WEB_ACCESSIBLE_DIR
-	ls $methylkit_from_bs_result_dir/*.sorted.bw | xargs -I {} echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl="$WEB_ACCESSIBLE_LOC/{};
+	ls $methylkit_from_bs_result_dir/*.sorted.bw | xargs -I {} cp {} $final_result_dir
+	ls $methylkit_from_bs_result_dir/*.sorted.bw | xargs -I {} echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl="$final_result_url/{};
 fi
 
 # NGS plot
@@ -366,7 +370,7 @@ echo "[INFO] Drawing ME density plots"
 # UCSC links
 for (( i=0; i<${#mu_list[@]}; i++ )); do
 	#already moved in run_mutation code
-#	cp $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.gz" $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.gz.tbi" $WEB_ACCESSIBLE_DIR
+#	cp $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.gz" $snp_from_mbd_result_dir"/"`basename \${mbd_list[$i]}`".vcf.gz.tbi" $final_result_dir
 	# print UCSC url
 	temp_filename_only=`basename \${mu_list[\$i]}`
 	temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
@@ -381,7 +385,7 @@ for (( i=0; i<${#mu_list[@]}; i++ )); do
 		vcf_filename=""
 	fi
 	
-	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=vcfTabix%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl=$WEB_ACCESSIBLE_LOC/$vcf_filename.gz"
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=vcfTabix%20name=ME_level%20description=ME_level%20visibility=dense%20bigDataUrl=$final_result_url/$vcf_filename.gz"
 done
 #################################
 # 6.2 For DEG, DMR, DSNP (Circos, Heatmap, region plot, Mu-Ge plot)
@@ -403,7 +407,7 @@ done
 			bash $bin_dir/create_annotation_link_html_based_on_gene_list.sh $ge_result_dir/$work_file > $viz_result_dir/$work_file".gene_only.annot.html"
 
 			# create annotation page for deg
-			cp $ge_result_dir/$work_file $viz_result_dir/$work_file".gene_only.annot.html" $WEB_ACCESSIBLE_DIR
+			cp $ge_result_dir/$work_file $viz_result_dir/$work_file".gene_only.annot.html" $final_result_dir
 		done
 	done
 
@@ -418,7 +422,7 @@ done
 			sh $bin_dir/create_annotation_link_html_based_on_gene_list.sh $viz_result_dir/$work_file".gene_only" > $viz_result_dir/$work_file".gene_only.annot.html"
 
 			# create annotation page for deg
-			cp $rna_result_dir/$work_file $viz_result_dir/$work_file".gene_only" $viz_result_dir/$work_file".gene_only.annot.html" $WEB_ACCESSIBLE_DIR
+			cp $rna_result_dir/$work_file $viz_result_dir/$work_file".gene_only" $viz_result_dir/$work_file".gene_only.annot.html" $final_result_dir
 		done
 	done
 COMMENT
@@ -556,6 +560,7 @@ temp_circos_file=$circos_dir"/circos_all.conf"
 bash $bin_dir/generate_circos_conf.sh ${#type_kind[@]} `my_join ";" ${all_type_file_list[@]}` $diff_all_file $GDEG_for_circos $CIRCOS_CONFIG_LOC $circos_min $circos_max $circos_diff_min $circos_diff_max > $temp_circos_file
 circos -conf $temp_circos_file -outputdir $circos_dir -outputfile "all"
 
+cp $circos_dir/*.png $final_result_dir
 
 ########################################
 # DMR : Fold change -> bedgraph -> bw
@@ -568,10 +573,10 @@ if [ "$me_data_type" -eq "0" ]; then
 			$bin_dir/bedGraphToBigWig $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff" $REF_HUMAN_CHR_SIZE $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw"
 
 			# copy to web accessible directory
-			cp $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw" $WEB_ACCESSIBLE_DIR
+			cp $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw" $final_result_dir
 
 			# print UCSC url
-			echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=${type_kind[$k]}_${type_kind[$l]}_DMR%20description=${type_kind[$k]}_${type_kind[$l]}_DMR%20visibility=dense%20bigDataUrl="$WEB_ACCESSIBLE_LOC/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw"
+			echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=${type_kind[$k]}_${type_kind[$l]}_DMR%20description=${type_kind[$k]}_${type_kind[$l]}_DMR%20visibility=dense%20bigDataUrl="$final_result_url/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw"
 		done
 	done
 elif [ "$me_data_type" -eq "3" ]; then
@@ -583,10 +588,10 @@ elif [ "$me_data_type" -eq "3" ]; then
 			$bin_dir/bedGraphToBigWig $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff" $REF_HUMAN_CHR_SIZE $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw"
 
 			# copy to web accessible directory
-			cp $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw" $WEB_ACCESSIBLE_DIR
+			cp $viz_result_dir/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw" $final_result_dir
 
 			# print UCSC url
-			echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=${type_kind[$k]}_${type_kind[$l]}_DMR%20description=${type_kind[$k]}_${type_kind[$l]}_DMR%20visibility=dense%20bigDataUrl="$WEB_ACCESSIBLE_LOC/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw"
+			echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigWig%20name=${type_kind[$k]}_${type_kind[$l]}_DMR%20description=${type_kind[$k]}_${type_kind[$l]}_DMR%20visibility=dense%20bigDataUrl="$final_result_url/${type_kind[$k]}"_vs_"${type_kind[$l]}".DMR.diff.bw"
 
 
 		done
@@ -605,10 +610,10 @@ fi
 	$bin_dir/bedToBigBed $integ_result_dir/GDMR_kw $REF_HUMAN_CHR_SIZE $viz_result_dir/GDMR_by_kw.bb
 	
 	# copy to web accessible directory
-	cp $viz_result_dir/GDMR_by_kw.bb $WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/GDMR_by_kw.bb $final_result_dir
 
 	# print UCSC url
-	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigBed%20name=GDMR_kw%20description=GDMR_kw%20visibility=dense%20bigDataUrl="$WEB_ACCESSIBLE_LOC/GDMR_by_kw.bb 
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigBed%20name=GDMR_kw%20description=GDMR_kw%20visibility=dense%20bigDataUrl="$final_result_url/GDMR_by_kw.bb 
 
 ########################################
 # DMR all : heatmap
@@ -637,8 +642,8 @@ fi
 	# create heatmap
 	$R_DIR/Rscript $bin_dir/make_heatmap3_ver2.r "$viz_result_dir/ME_MAT.kw.txt.sorted.top10" `my_join "," ${basename_list[@]}` "Class" `my_join "," ${type_kind[@]}` "$viz_result_dir/DMR_TOP10_heatmap.png" "Top_10_DMRs_by_Kruscal_Wallis"
 
-	# copy to WEB_ACCESSIBLE_DIR
-	cp $viz_result_dir/DMR_TOP10_heatmap.png $WEB_ACCESSIBLE_DIR
+	# copy to final_result_dir
+	cp $viz_result_dir/DMR_TOP10_heatmap.png $final_result_dir
 
 
 ########################################
@@ -674,7 +679,7 @@ fi
 	$NEW_R_DIR/Rscript $bin_dir/barplot_ver2.r $viz_result_dir/DMR_region_stat_matrix.txt $viz_result_dir/DMR_region_stat_barplot.png "region"
 	$NEW_R_DIR/Rscript $bin_dir/barplot_ver2.r $viz_result_dir/DMR_cpgi_stat_matrix.txt $viz_result_dir/DMR_cpgi_stat_barplot.png "cgi"
 
-	cp $viz_result_dir/DMR_region_stat_barplot.png $viz_result_dir/DMR_cpgi_stat_barplot.png $WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/DMR_region_stat_barplot.png $viz_result_dir/DMR_cpgi_stat_barplot.png $final_result_dir
 
 ############
 # 6.2.3 MU 
@@ -719,9 +724,7 @@ for range in "genebody" "cpgIsland" "exon"; do
 			temp_filename_only=`basename \${mu_list[\$i]}`
 			temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
 			vcf_bed_file=""
-			if [ "$mu_data_type" -eq "0" ]; then # DNR-seq
-				vcf_bed_file=$mu_result_dir/$temp_filename_only".vcf.bed"
-			elif [ "$mu_data_type" -eq "1" ]; then # RNA-seq
+			if [ "$mu_data_type" -eq "0" ] || [ "$mu_data_type" -eq "1" ]; then # DNR-seq
 				vcf_bed_file=$mu_result_dir/$temp_filename_only_wo_extension"_Aligned.out.split.filtered.vcf.bed"
 			else
 				vcf_bed_file=""
@@ -756,7 +759,7 @@ for range in "genebody" "cpgIsland" "exon"; do
 
 	$NEW_R_DIR/Rscript $bin_dir/plot.r $viz_result_dir/SNP_$range"_matrix4plot_all" $viz_result_dir/SNP_$range"_all.png"
 
-	cp $viz_result_dir/SNP_*.png $WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/SNP_*.png $final_result_dir
 done
 
 # GDSNP all :  bed w/ label -> bb
@@ -764,10 +767,10 @@ done
 	$bin_dir/bedToBigBed $viz_result_dir/GDSNP_sorted.bed $REF_HUMAN_CHR_SIZE $viz_result_dir/GDSNP_sorted.bb
 
 	# copy BigBed to web accessible dir
-	cp $viz_result_dir/GDSNP_sorted.bb $WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/GDSNP_sorted.bb $final_result_dir
 
 	# create UCSC link
-	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigBed%20name=GDSNP%20description=GDSNP%20visibility=pack%20bigDataUrl=$WEB_ACCESSIBLE_LOC/GDSNP_sorted.bb"
+	echo "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:1-1000000&hgct_customText=track%20type=bigBed%20name=GDSNP%20description=GDSNP%20visibility=pack%20bigDataUrl=$final_result_url/GDSNP_sorted.bb"
 
 
 # GDSNP per sample : boxplot
@@ -796,7 +799,7 @@ done
 
 	$NEW_R_DIR/Rscript $bin_dir/boxplot.r `ls $viz_result_dir/*sample_cnt_w_zero_for_others | tr "\n" ";"` `my_join ";" ${type_len[@]}` `my_join ";" ${type_kind[@]}` $viz_result_dir/GDSNP_boxplot_genomic.png $viz_result_dir/GDSNP_boxplot_cpgi.png
 
-	cp $vis_result_dir/GDSNP_boxplot_genomic.png $viz_result_dir/GDSNP_boxplot_cpgi.png $WEB_ACCESSIBLE_DIR
+	cp $vis_result_dir/GDSNP_boxplot_genomic.png $viz_result_dir/GDSNP_boxplot_cpgi.png $final_result_dir
 
 
 <<'COMMENT'
@@ -827,7 +830,7 @@ done
 	/home/airavata/packages/R-3.2.3/bin/Rscript $bin_dir/boxplot.r $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_CPGs.png "Number of tumor subtype specific mutation"
 #	Rscript $bin_dir/barplot.r $viz_result_dir/GDSNP_ALL_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_ALL.png "Number of tumor subtype specific mutation"
 
-	cp $viz_result_dir/BAR_GDSNP_RNG.png $viz_result_dir/GDSNP_RNG_STAT_MAT.txt $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_CPGs.png $WEB_ACCESSIBLE_DIR
+	cp $viz_result_dir/BAR_GDSNP_RNG.png $viz_result_dir/GDSNP_RNG_STAT_MAT.txt $viz_result_dir/GDSNP_CPGs_STAT_MAT.txt $viz_result_dir/BAR_GDSNP_CPGs.png $final_result_dir
 COMMENT
 
 ## case2
@@ -941,9 +944,7 @@ COMMENT
     		snp_temp_filename_only=`basename \${mu_list[\$i]}`
     		snp_temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
     
-				if [ "$mu_data_type" -eq "0" ]; then
-      		snp_file=$mu_result_dir/$snp_temp_filename_only".vcf.bed"
-    		elif [ "$mu_data_type" -eq "1" ]; then
+				if [ "$mu_data_type" -eq "0" ] || [ "$mu_data_type" -eq "1" ] ; then
       		snp_file=$mu_result_dir/$snp_temp_filename_only_wo_extension"_Aligned.out.split.filtered.vcf.bed"
     		else
       		snp_file=""
@@ -993,9 +994,7 @@ COMMENT
     		snp_temp_filename_only=`basename \${mu_list[\$i]}`
     		snp_temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
     
-				if [ "$mu_data_type" -eq "0" ]; then
-      		snp_file=$mu_result_dir/$snp_temp_filename_only".vcf.bed"
-    		elif [ "$mu_data_type" -eq "1" ]; then
+				if [ "$mu_data_type" -eq "0" ] || [ "$mu_data_type" -eq "1" ] ; then
       		snp_file=$mu_result_dir/$snp_temp_filename_only_wo_extension"_Aligned.out.split.filtered.vcf.bed"
     		else
       		snp_file=""
@@ -1055,9 +1054,7 @@ COMMENT
     		snp_temp_filename_only=`basename \${mu_list[\$i]}`
     		snp_temp_filename_only_wo_extension=`basename \${mu_list[$i]} "."$snp_file_extension`
     
-				if [ "$mu_data_type" -eq "0" ]; then
-      		snp_file=$mu_result_dir/$snp_temp_filename_only".vcf.bed"
-    		elif [ "$mu_data_type" -eq "1" ]; then
+				if [ "$mu_data_type" -eq "0" ] || [ "$mu_data_type" -eq "1" ] ; then
       		snp_file=$mu_result_dir/$snp_temp_filename_only_wo_extension"_Aligned.out.split.filtered.vcf.bed"
     		else
       		snp_file=""

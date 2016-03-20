@@ -4,9 +4,13 @@ source `dirname $0`/../../env.sh
 # parse experiment information
 source `dirname $0`/parse_exp_info.sh
 
+NUM_CPUS=$SYS_NUM_CPUS
+
 # directories
 bin_dir="$WORK_DIR/bin"
-result_dir="$WORK_DIR/result"
+#<<'COMMENT'
+#result_dir="$WORK_DIR/result"
+#COMMENT
 #profile_result_dir="$WORK_DIR/profile"
 integ_result_dir=$result_dir"/integrated"
 mbd_result_dir=$result_dir"/methyl/mbd"

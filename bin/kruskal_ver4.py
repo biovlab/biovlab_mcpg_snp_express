@@ -25,7 +25,7 @@ def calc_kruskal(x, sample_num_l, alpha):
 #		h,p = stats.kruskal(*tmp_input_l) #run kruskal-wallist test
 		h,p = stats.f_oneway(*tmp_input_l)
 	except ValueError:
-		return x+[float('nan')]
+		return x+[`float('nan')`]
 	
 #	if math.isnan(p) :
 #		return x+['1.00','0']	

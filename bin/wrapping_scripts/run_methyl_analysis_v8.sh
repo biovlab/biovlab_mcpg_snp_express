@@ -6,7 +6,9 @@ source `dirname $0`/parse_exp_info.sh
 
 # variables
 bin_dir="$WORK_DIR/bin"
+<<'COMMENT'
 result_dir="$WORK_DIR/result"
+COMMENT
 #result_dir="/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/small_test_data/targeted_bs_breast_cancer_80genes/small_test/"
 
 #functions

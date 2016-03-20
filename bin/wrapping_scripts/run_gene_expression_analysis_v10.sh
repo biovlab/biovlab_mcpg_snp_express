@@ -4,10 +4,12 @@ source `dirname $0`/../../env.sh
 # parse experiment information
 source `dirname $0`/parse_exp_info.sh
 
+NUM_CPUS=$ge_cpu
+
 # variables
 bin_dir="$WORK_DIR/bin"
 lib_dir="$WORK_DIR/lib"
-result_dir="$WORK_DIR/result"
+#result_dir="$WORK_DIR/result"
 #result_dir="/usr/local/apache2/htdocs/biovlab_mcpg_snp_express/test_data/rna_paired_test_data/"
 
 # directories
@@ -286,9 +288,9 @@ COMMENT
 		echo -e "$second_star_out_bam_uniq\t-1\t$output_prefix" >> $rnaseq_result_dir/ngsplot_config_all.txt
 	done; wait
 
-	#for region in "genebody" "cgi"; do
-		#ngs.plot.r -G hg19 -R $region -C $rnaseq_result_dir/ngsplot_config_all.txt -O $rnaseq_result_dir/GE_all_$region
-	#done
+	for region in "genebody" "cgi"; do
+		ngs.plot.r -G hg19 -R $region -C $rnaseq_result_dir/ngsplot_config_all.txt -O $rnaseq_result_dir/GE_all_$region
+	done
 
 
 	######################
@@ -407,6 +409,8 @@ COMMENT
 	done
 fi
 
+# copy all final results
+cp $cel_result_dir/*.DEG.list $deg_analysis_dir/*.DEGs $deg_analysis_dir/*.UP_DOWN $final_result_dir
 <<'COMMENT'
 
 	sample_list=""
