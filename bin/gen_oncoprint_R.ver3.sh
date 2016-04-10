@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# variables
+old_IFS=$IFS
+
+IFS=';' read -r -a class_list <<< "$1"
+
+IFS=";" read -r -a color_list <<< "$2"
+
+IFS=$old_IFS
+
+echo '''library(ComplexHeatmap)
+
+args <- commandArgs(TRUE)
+
+data_input <- args[1]
+class_list <- unlist(strsplit(args[2], ";"))
+column_list <- unlist(strsplit(args[3], ";"))
+title <- args[4]
+output <- args[5]
+
+source(args[6])
+
+data <- read.table(data_input, header=F, sep="\t")
+data[is.na(data)] = ""
+
+gene_list <- data[,1]
+data <- data[,-1]
+rownames(data) <- gene_list
+colnames(data) <- column_list
+data <- as.matrix(data)
+
+alter_fun_list = list(
+	background = function(x, y, w, h) {
+		grid.rect(x, y, w-unit(0.5, "mm"), h-unit(0.5, "mm"), gp = gpar(fill = "#CCCCCC", col = NA))
+	},
+'''
+
+for((i=0;i<${#class_list[@]}-1;i++)); do
+
+echo	"	"${class_list[$i]}''' = function(x, y, w, h) {
+    grid.rect(x, y, w-unit(0.5, "mm"), h-unit(0.5, "mm"), gp = gpar(fill = "'''${color_list[$i]}'''", col = NA))
+  },
+'''
+done
+
+echo  " "${class_list[$((${#class_list[@]}-1))]}''' = function(x, y, w, h) {
+    grid.rect(x, y, w-unit(0.5, "mm"), h-unit(0.5, "mm"), gp = gpar(fill = "'''${color_list[$((${#class_list[@]}-1))]}'''", col = NA))
+  }
+)
+'''
+
+echo "col = c("
+
+for((i=0;i<${#class_list[@]}-1;i++)); do
+		echo '"'${class_list[$i]}'" = "'${color_list[$i]}'",'
+done
+
+echo '"'${class_list[$((${#class_list[@]}-1))]}'" = "'${color_list[$((${#class_list[@]}-1))]}'"'
+echo ")"
+
+
+echo '''sample_order=colnames(data)
+
+
+png(output)
+oncoPrint(data, get_type = function(x) strsplit(x, ";")[[1]],
+          alter_fun = alter_fun_list, col = col, 
+          row_order=NULL,
+          column_order = sample_order, show_column_names =TRUE,
+          column_title = title, heatmap_legend_param = list(title="class"))
+dev.off()
+'''
+
+
