@@ -1,1 +1,1 @@
-preprocess_mu_input_v1.sh
+/data/project/MSG/bin/wrapping_scripts/run_scripts/preprocess_mu_input_v1.sh

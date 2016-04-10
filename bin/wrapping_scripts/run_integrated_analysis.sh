@@ -1,1 +1,1 @@
-run_integrated_analysis_v8.sh
+/data/project/MSG/bin/wrapping_scripts/run_scripts/run_integrated_analysis_v9.sh

@@ -1,1 +1,1 @@
-parse_exp_info_v5.sh
+/data/project/MSG/bin/wrapping_scripts/run_scripts/parse_exp_info_v5.sh

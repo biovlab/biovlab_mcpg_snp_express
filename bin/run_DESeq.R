@@ -2,13 +2,21 @@
 library(DESeq2)
 library(optparse)
 
+resetPar <- function() {
+    dev.new()
+    op <- par(no.readonly = TRUE)
+    dev.off()
+    op
+}
+
 # make options
 option_list <- list( 
     make_option(c("-s", "--sample_list"), action="store"),
     make_option(c("-r", "--result_dir"), action="store"),
     make_option(c("-o", "--deseq_result"), action="store"),
     make_option(c("-l", "--sample_num_list"), action="store"),
-    make_option(c("-c", "--count_table"), action="store")
+    make_option(c("-c", "--count_table"), action="store"),
+		make_option(c("--output_prefix"), action="store")
     )
 
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -20,8 +28,8 @@ sample_num_list <- unlist(strsplit(opt$sample_num_list, ";"))
 count_table_file <- opt$count_table
 final_result_file <- opt$deseq_result
 
-output_prefix <- paste(unique(sample_num_list), collapse="_")
-
+#output_prefix <- paste(unique(sample_num_list), collapse="_")
+output_prefix <- opt$output_prefix
 
 print("**** arguments ****")
 result_dir
@@ -33,7 +41,7 @@ output_prefix
 print("**** arguments ****")
 
 # read couting table
-mycounts <- read.table(count_table_file, header=TRUE, row.names=1)
+mycounts <- read.table(count_table_file, header=FALSE, row.names=1)
 
 # set sample information
 # temp <- c(test[3:length(test)]) handle input argument like this to make below
@@ -60,11 +68,21 @@ res
 
 # create MA plot
 result_dir
-result_fig <- paste(result_dir, "/",output_prefix,"_ma_plot.jpg", collapse = "", sep="") 
+result_fig <- paste(result_dir, "/",output_prefix,".MA_plot.png", collapse = "", sep="") 
 result_fig
 png(result_fig)
-plotMA(dds,ylim=c(-2,2),main="MA-plot")
+plotMA(dds,ylim=c(-2,2),main=output_prefix)
 dev.off()
+
+#cooks distance boxplot
+boxplot_fig <- paste(result_dir, "/",output_prefix,".norm.boxplot.png", collapse = "", sep="")
+
+par(mar=c(8,5,2,2))
+png(boxplot_fig)
+boxplot(log10(assays(dds)[["cooks"]]), range=0, las=2)
+dev.off()
+
+par(resetPar())
 
 # write result to file
 write.table(res,file=final_result_file, quote= FALSE , sep="\t")

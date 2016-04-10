@@ -51,7 +51,7 @@ for(i in 1:length(sample.id_list)){
 	sink(stat_out_list[[i]])
 
 #	getMethylationStats(myobj[[i]], plot=FALSE, both.strands=FALSE)
-	png(paste(result_dir, "/", basename_list[[i]], ".MethylationStats.png",sep=""))
+	png(paste(result_dir, "/", basename_list[[i]], ".MethylStats.png",sep=""))
 	getMethylationStats(myobj[[i]], plot=TRUE, both.strands=FALSE)
 	dev.off()
 

@@ -45,8 +45,8 @@ x_bin <- as.numeric(rownames(h2d_data))
 for (i in 0:24)
 {
   df[(i*25+1):(i*25+25),1] <- x_bin
-  df[(i*25+1):(i*25+25),2] <- as.numeric(colnames(d)[i+1])
-  df[(i*25+1):(i*25+25),3] <- as.numeric(d[,i+1]) 
+  df[(i*25+1):(i*25+25),2] <- as.numeric(colnames(h2d_data)[i+1])
+  df[(i*25+1):(i*25+25),3] <- as.numeric(h2d_data[,i+1]) 
 }
 
 

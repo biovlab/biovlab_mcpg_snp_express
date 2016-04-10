@@ -15,6 +15,7 @@ option_list = list(
 		make_option(c("-o", "--commeRbund_result"), action="store"),
 		make_option(c("-w", "--window_size"), action="store", default=100),
 		make_option(c("-n", "--normalize"), action="store", default=FALSE),
+		make_option(c("--pval"), action="store", default=0.05),
 		make_option("--out_prefix", action="store"),
 		make_option(c("-l", "--sample_num_list"), action="store")
 		)
@@ -32,6 +33,8 @@ ref = opt$reference
 cpgi_ref = opt$cpgi_reference
 window = as.numeric(opt$window_size)
 normal_flag = opt$normalize
+pval_cut = as.numeric(opt$pval)
+
 
 comp_sample = opt$out_prefix
 
@@ -82,7 +85,7 @@ sink(comp_out_file)
 #sample correlation
 cat("[Correlation Analysis - base]\n")
 #getCorrelation(meth, plot=FALSE)
-png(paste(result_dir,"/",comp_sample, ".Correlation.png",sep=""))
+png(paste(result_dir,"/",comp_sample, ".corr.png",sep=""))
 tryCatch({
 getCorrelation(meth, plot=TRUE)
 }, error=function(err){
@@ -101,17 +104,19 @@ cat("\n")
 
 
 #clustering samples
-cat("[Clustering Analysis - base]\n")
-png(paste(result_dir,"/",comp_sample, ".Cluster.png",sep=""))
-tryCatch({
-	clusterSamples(meth, dist="correlation", method="ward", plot=TRUE)
-}, error=function(err){
-	cat("[Error] Fail to clustering\n")
-	print(err)
-}, finally={
-})
-dev.off()
-cat("\n")
+if(FALSE) {
+	cat("[Clustering Analysis - base]\n")
+	png(paste(result_dir,"/",comp_sample, ".Cluster.png",sep=""))
+	tryCatch({
+		clusterSamples(meth, dist="correlation", method="ward", plot=TRUE)
+	}, error=function(err){
+		cat("[Error] Fail to clustering\n")
+		print(err)
+	}, finally={
+	})
+	dev.off()
+	cat("\n")
+}
 
 #cat("[Clustering Analysis - region]\n")
 #clusterSamples(methr, dist="correlation", method="ward", plot=TRUE)
@@ -120,25 +125,28 @@ cat("\n")
 
 #PCA analysis
 #cat("[PCA Analysis - base]\n")
-png(paste(result_dir,"/",comp_sample, ".PCA_screeplot.png",sep=""))
-tryCatch({
-PCASamples(meth, screeplot=TRUE)
-}, error=function(err){
-  cat("[Error] Fail to PCA\n")
-	print(err)
-}, finally={
-})
-dev.off()
-png(paste(result_dir,"/",comp_sample, ".PCA_plot.png",sep=""))
-tryCatch({
-PCASamples(meth) #PCA plot with PC1 and PC2 axis and a scatter plot
-}, error=function(err){
-	cat("[Error] Fail to PCA\n")
-  print(err)
-}, finally={
-})
-dev.off()
-cat("\n")
+
+if(FALSE) {
+	png(paste(result_dir,"/",comp_sample, ".PCA_screeplot.png",sep=""))
+	tryCatch({
+	PCASamples(meth, screeplot=TRUE)
+	}, error=function(err){
+	  cat("[Error] Fail to PCA\n")
+		print(err)
+	}, finally={
+	})
+	dev.off()
+	png(paste(result_dir,"/",comp_sample, ".PCA_plot.png",sep=""))
+	tryCatch({
+	PCASamples(meth) #PCA plot with PC1 and PC2 axis and a scatter plot
+	}, error=function(err){
+		cat("[Error] Fail to PCA\n")
+	  print(err)
+	}, finally={
+	})
+	dev.off()
+	cat("\n")
+}
 
 #cat("[PCA Analysis - region]\n")
 #PCASamples(methr, screeplot=TRUE)
@@ -156,11 +164,11 @@ tryCatch({
 
 	#q-value<0.01 and percent methylation difference larger than 25%.
 	#get hyper methylated bases
-	myDiff25p.hyper=get.methylDiff(myDiff, difference=25,qvalue=0.01,type="hyper")
+	myDiff25p.hyper=get.methylDiff(myDiff, difference=25,qvalue=pval_cut,type="hyper")
 	#get hypo methylated bases
-	myDiff25p.hypo=get.methylDiff(myDiff, difference=25,qvalue=0.01,type="hypo")
+	myDiff25p.hypo=get.methylDiff(myDiff, difference=25,qvalue=pval_cut,type="hypo")
 	#get all differentially methylated bases
-	myDiff25p = get.methylDiff(myDiff, difference=25, qvalue=0.01)
+	myDiff25p = get.methylDiff(myDiff, difference=25, qvalue=pval_cut)
 
 	cat("[Hyper Methylated Region (versus control)]\n")
 	myDiff25p.hyper

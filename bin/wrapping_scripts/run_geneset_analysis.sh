@@ -1,1 +1,1 @@
-run_geneset_analysis_v1.sh
+/data/project/MSG/bin/wrapping_scripts/run_scripts/run_geneset_analysis_v1.sh

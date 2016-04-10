@@ -19,8 +19,7 @@ if(type == "region"){
 	ggdraw(switch_axis_position(fig3,'xy')) -> fig4
 	
 	ggsave(output,fig4, width=10, height=5)
-}
-else{
+} else{
 	c_data <- read.table(input, sep="\t", header=TRUE, quote="\"")
 	
 	ggplot(data=c_data, aes(x=subtype_pair, y=counts, fill=factor(Region), stat="identify" ),) + geom_bar(stat="identity") + coord_flip() + ylab("Number of differentially methylated bins") + xlab("") + theme_classic() -> c_fig

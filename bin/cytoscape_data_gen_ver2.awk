@@ -45,56 +45,71 @@ BEGIN{
 	ii++;
 }
 END{
-	print "var elements = {";
-	print "\tnodes: [";
+	print "{\n\t\"elements\" : {";
+	print "\t\t\"nodes\" : [";
 	for(elem in deg_arr)
 	{
-		printf "\t\t{ data: { id: \"%s\", name: \"%s\", type: \"deg\", ", elem, elem;
+		printf "\t\t\t{ \"data\" : { \"id\" : \"%s\", \"name\" : \"%s\", \"type\" : \"deg\", ", elem, elem;
 		split(deg_arr[elem], temp_arr,",");
 		for(i=1;i<class_num;i++)
 		{
-			printf "c%d: %d, ", i, temp_arr[i];
+			printf "\"c%d\" : %d, ", i, temp_arr[i];
 		};
-		printf "c%d: %d } },", class_num, temp_arr[class_num];
+		printf "\"c%d\" : %d } },", class_num, temp_arr[class_num];
 		printf "\n";
 	};
 	printf "\n";
 				
 	for(elem in promoter_arr)
 	{
-		printf "\t\t{ data: { id: \"%s\", name: \"%s\", type: \"dmr\", ", elem, elem;
+		printf "\t\t\t{ \"data\" : { \"id\" : \"%s\", \"name\" : \"%s\", \"type\" : \"dmr\", ", elem, elem;
 		split(promoter_arr[elem], temp_arr, ",");
 		for(i=1;i<class_num;i++)
 		{
-			printf "c%d: %d, ", i, temp_arr[i];
+			printf "\"c%d\": %d, ", i, temp_arr[i];
 		};
-		printf "c%d: %d } },", class_num, temp_arr[class_num];
+		printf "\"c%d\": %d } },", class_num, temp_arr[class_num];
 		printf "\n";
 	};
 	printf "\n";
-				
+	tf_len=length(tf_arr);
+	my_index=1;				
 	for(elem in tf_arr)
 	{
-		printf "\t\t{ data: { id: \"%s\", name: \"%s\", type: \"tf\", ", elem, elem;
+		printf "\t\t\t{ \"data\" : { \"id\" : \"%s\", \"name\" : \"%s\", \"type\" : \"tf\", ", elem, elem;
 		split(tf_arr[elem], temp_arr, ",");
 		for(i=1;i<class_num;i++)
 		{
-			printf "c%d: %d, ", i, temp_arr[i];
+			printf "\"c%d\": %d, ", i, temp_arr[i];
 		};
-		printf "c%d: %d } },", class_num, temp_arr[class_num];
+		if(my_index < tf_len){
+			printf "\"c%d\": %d } },", class_num, temp_arr[class_num];
+		}else{
+			printf "\"c%d\": %d } }", class_num, temp_arr[class_num];
+		};
 		printf "\n";
+		my_index=my_index+1;
 	};				
-	print "\t],";
-	print "edges: [";
-
+	print "\t\t],";
+	print "\t\t\"edges\": [";
+	edge_len=length(edge_arr);
+	my_index=1;
 	for(elem in edge_arr)
 	{
-		split(edge_arr[elem], temp_arr, ",");
-		printf "\t\t{ data: { id: \"%s-%s\", source: \"%s\", target: \"%s\" }},", temp_arr[1], temp_arr[2], temp_arr[1], temp_arr[2];
-		printf "\n";
+		if(my_index < edge_len){
+			split(edge_arr[elem], temp_arr, ",");
+			printf "\t\t\t{ \"data\": { \"id\": \"%s-%s\", \"source\" : \"%s\", \"target\" : \"%s\" }},", temp_arr[1], temp_arr[2], temp_arr[1], temp_arr[2];
+			printf "\n";
+		} else{
+			split(edge_arr[elem], temp_arr, ",");
+			printf "\t\t\t{ \"data\": { \"id\": \"%s-%s\", \"source\" : \"%s\", \"target\" : \"%s\" }}", temp_arr[1], temp_arr[2], temp_arr[1], temp_arr[2];
+      printf "\n";
+		};
+		my_index=my_index+1;
 	}
-	print "\t]"
-	print "};"
+	print "\t\t]";
+	print "\t}";
+	print "}"
 }
 
 

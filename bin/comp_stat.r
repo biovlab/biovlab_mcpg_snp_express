@@ -15,6 +15,7 @@ option_list = list(
 		make_option(c("-o", "--commeRbund_result"), action="store"),
 		make_option(c("-w", "--window_size"), action="store", default=100),
 		make_option(c("-n", "--normalize"), action="store", default=FALSE),
+		make_option(c("--pval"), action="store", default=0.01),
 		make_option("--out_prefix", action="store"),
 		make_option(c("-l", "--sample_num_list"), action="store")
 		)
@@ -32,6 +33,7 @@ ref = opt$reference
 cpgi_ref = opt$cpgi_reference
 window = as.numeric(opt$window_size)
 normal_flag = opt$normalize
+pval_cut = as.numeric(opt$pval)
 
 comp_sample = opt$out_prefix
 
@@ -129,11 +131,11 @@ myDiff = calculateDiffMeth(methr)
 
 #q-value<0.01 and percent methylation difference larger than 25%.
 #get hyper methylated bases
-myDiff25p.hyper=get.methylDiff(myDiff, difference=25,qvalue=0.01,type="hyper")
+myDiff25p.hyper=get.methylDiff(myDiff, difference=25,qvalue=pval_cut,type="hyper")
 #get hypo methylated bases
-myDiff25p.hypo=get.methylDiff(myDiff, difference=25,qvalue=0.01,type="hypo")
+myDiff25p.hypo=get.methylDiff(myDiff, difference=25,qvalue=pval_cut,type="hypo")
 #get all differentially methylated bases
-myDiff25p = get.methylDiff(myDiff, difference=25, qvalue=0.01)
+myDiff25p = get.methylDiff(myDiff, difference=25, qvalue=pval_cut)
 
 cat("[Hyper Methylated Region (versus control)]\n")
 myDiff25p.hyper

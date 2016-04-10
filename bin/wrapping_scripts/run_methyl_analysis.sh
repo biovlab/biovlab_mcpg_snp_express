@@ -1,1 +1,1 @@
-run_methyl_analysis_v9.sh
+/data/project/MSG/bin/wrapping_scripts/run_scripts/run_methyl_analysis_v9.sh

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # variables
 old_IFS=$IFS

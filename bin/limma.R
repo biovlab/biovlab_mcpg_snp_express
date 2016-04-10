@@ -11,6 +11,7 @@ option_list <- list(
     make_option(c("-r", "--result_dir"), action="store"),
     make_option(c("-o", "--limma_result"), action="store"),
     make_option(c("-p", "--output_prefix"), action="store"),
+		make_option(c("--pvalue", action="store")),
     make_option(c("-l", "--sample_num_list"), action="store")
     #make_option(c("-c", "--count_table"), action="store")
     )
@@ -24,6 +25,7 @@ sample_num_list <- unlist(strsplit(opt$sample_num_list, ";"))
 limma_result <- opt$limma_result
 output_prefix <- opt$output_prefix
 result_dir <- opt$result_dir
+pvalue_cut <- as.numeric(opt$pvalue)
 
 # variables
 #file1_1="/home/heechae/projects/wd_back/user_data/gene_expression/100730_s_1_export.txt.CEL"
@@ -55,6 +57,13 @@ data
 eset<-rma(data)
 cat("[INFO] eset\n")
 eset
+
+cat("[INFO] draw box plot\n")
+box_fig <-  paste(result_dir, "/", output_prefix, ".norm.boxplot.png", collapse = "", sep="")
+png(box_fig)
+boxplot(exprs(eset))
+dev.off()
+
 
 # sample names
 cat("[INFO] eset sample names\n")
@@ -127,6 +136,7 @@ if (replicate==0){
 # statistical significance test based on replicates
 fit2 <- eBayes(fit2)
 
+
 cat("[INFO] Store result to files\n")
 limma_result1=topTable(fit2, n=Inf, coef=1, adjust="BH")
 write.table(limma_result1, file=paste(result_dir,"/",output_prefix,".limma.txt", sep=""), row.names =FALSE, col.names = TRUE, sep ="\t", quote=FALSE)
@@ -134,8 +144,35 @@ write.table(limma_result1, file=paste(result_dir,"/",output_prefix,".limma.txt",
 results <- decideTests(fit2)
 results
 
+#draw MA plot
+cat("MA plot\n")
+
+# get P.adj with orignal order
+limma_result2=topTable(fit2, n=Inf, coef=1, adjust="BH",sort.by="none")
+
+# get deg numbers
+degs_num <- length(which(limma_result1$adj.P.Val < pvalue_cut))
+
+degs <- order(limma_result2$adj.P.Val)[1:degs_num]
+
+
+MA_plot <- paste(result_dir, "/", output_prefix, ".MA_plot.png", collapse = "", sep="")
+png(MA_plot)
+plotMD(fit2, main=output_prefix)
+abline(0,0,col="red")
+points(fit2$Amean[degs], fit2$coef[degs], cex=0.8, pch=16, col="red")
+dev.off()
+
+
+# draw volcano plot
+volcano <- paste(result_dir, "/", output_prefix, ".volcano.png", collapse = "", sep="")
+png(volcano)
+volcanoplot(fit2, main=output_prefix)
+points(fit2$coef[degs], fit2$lods[degs], cex=0.8, pch=16, col="red")
+dev.off()
+
 # print out results
-tops <- topTable(fit2, n=Inf)
+#tops <- topTable(fit2, n=Inf)
 
 # Draw venndiagram
 cat("[INFO] Create vennDiagram\n")
