@@ -1,1 +1,1 @@
-/data/project/MSG/bin/wrapping_scripts/run_scripts/run_methyl_analysis_v11.sh
+/home/airavata/biovlab_mcpg_snp_express/bin/wrapping_scripts/run_scripts/run_methyl_analysis_v11.sh

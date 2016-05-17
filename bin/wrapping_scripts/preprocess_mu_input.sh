@@ -1,1 +1,1 @@
-/data/project/MSG/bin/wrapping_scripts/run_scripts/preprocess_mu_input_v1.sh
+/home/airavata/biovlab_mcpg_snp_express/bin/wrapping_scripts/run_scripts/preprocess_mu_input_v1.sh
