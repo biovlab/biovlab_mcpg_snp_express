@@ -43,8 +43,8 @@ if [ "$single_pair" == "pair" ]; then
 
 	# sort sam by samtools
 	#samtools view -@ $NUM_CPUS -ubS $result_dir/$filename1_wo_ext"_val_1.fq_bismark_pe.sam" | samtools sort -@ $NUM_CPUS -m 3G  - $result_dir/$filename1_wo_ext"_val_1.fq_bismark_pe.sorted"
-	samtools sort -@ $NUM_CPUS -m 3G $result_dir/$filename1_wo_ext"_val_1.fq_bismark_bt2_pe.bam" $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted"
-	samtools view -@ $NUM_CPUS $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.bam" > $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.sam"
+	samtools sort -@ $SYS_NUM_CPUS -m 3G $result_dir/$filename1_wo_ext"_val_1.fq_bismark_bt2_pe.bam" $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted"
+	samtools view -@ $SYS_NUM_CPUS $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.bam" > $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.sam"
 
 else
 	echo "[INFO] This is single end input"
@@ -52,7 +52,7 @@ else
 	bismark -o $result_dir $BISMARK_REF_DIR_HUMAN $result_dir/$filename1_wo_ext"_trimmed.fq" 
 
 	# sort sam by samtools
-	samtools sort -@ $NUM_CPUS -m 3G $result_dir/$filename1_wo_ext"_trimmed.fq_bismark_bt2_pe.bam" $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted"
-	samtools view -@ $NUM_CPUS $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.bam" > $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.sam" 
+	samtools sort -@ $SYS_NUM_CPUS -m 3G $result_dir/$filename1_wo_ext"_trimmed.fq_bismark_bt2_pe.bam" $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted"
+	samtools view -@ $SYS_NUM_CPUS $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.bam" > $result_dir/$filename1_wo_ext"_bismark_bt2_pe.sorted.sam" 
 	
 fi 

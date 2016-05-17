@@ -18,8 +18,10 @@ stat_out_file_fd = open(sys.argv[2], "w")
 matrix_out_file_threshold_fd = open(sys.argv[5], "w")
 matrix_out_file_PC_NC_fd = open(sys.argv[6], "w")
 sample_num=int(sys.argv[3])
-range_kind_index=sample_num+8-1
-corr_index=(sample_num*2)+10-1
+#range_kind_index=sample_num+8-1
+#corr_index=(sample_num*2)+10-1
+range_kind_index=sample_num+9-1
+corr_index=(sample_num*2)+11-1
 
 in_fd = open(sys.argv[1], "r")
 

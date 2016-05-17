@@ -9,6 +9,7 @@ option_list <- list(
     make_option(c("-b", "--sample_list2"), action="store"),
     make_option(c("-r", "--result_dir"), action="store"),
     make_option(c("-p", "--result_prefix"), action="store")
+		make_option(c("--pvalue"), action="store"),
 #    make_option(c("-l", "--sample_num_list"), action="store"),
     #make_option(c("-c", "--count_table"), action="store")
     )
@@ -27,6 +28,7 @@ sample_list1 <- unlist(strsplit(opt$sample_list1, ";"))
 sample_list2 <- unlist(strsplit(opt$sample_list2, ";"))
 result_dir <- opt$result_dir
 result_prefix <- opt$result_prefix
+pval <- as.numeric(opt$pvalue)
 
 # functions
 to_file <- function(filename, content){
@@ -47,6 +49,26 @@ to_file <- function(filename, content){
 	return("")
 }
 
+# Sequence Pattern Coverage
+cat("[INFO] Draw Sequence pattern coverage plots")
+for (replicate in sample_list1) {
+	cr = MEDIPS.seqCoverage(file = replicate, pattern = "CG", BSgenome = genome, extend = extend, shift = shift,uniq = uniq)
+	
+	result_file <- paste(result_dir,"/", result_prefix, ".CoverageStats.png", collapse = "", sep="")
+	
+	png(result_file)
+	MEDIPS.plotSeqCoverage(seqCoverageObj=cr, type="pie", cov.level = c(0,1, 2, 3, 4, 5))
+	dev.off()
+}
+for (replicate in sample_list2) {
+	cr = MEDIPS.seqCoverage(file = replicate, pattern = "CG", BSgenome = genome, extend = extend, shift = shift,uniq = uniq)
+	
+	result_file <- paste(result_dir,"/", result_prefix, ".CoverageStats.png", collapse = "", sep="")
+	
+	png(result_file)
+	MEDIPS.plotSeqCoverage(seqCoverageObj=cr, type="pie", cov.level = c(0,1, 2, 3, 4, 5))
+	dev.off()
+}
 
 # create MEDIP set1 
 cat("[INFO] Create input1 MEDIP dataset")
@@ -89,7 +111,7 @@ mr.edgeR = MEDIPS.meth(MSet1 = temp_MEDIPS1, MSet2 = temp_MEDIPS2,  CSet = CS, I
 	cat("[INFO] mr.edgeR done\n")
 
 # select significant window
-mr.edgeR.s = MEDIPS.selectSig(results = mr.edgeR, p.value = 0.1,adj = T, ratio = NULL, bg.counts = NULL, CNV = F)
+mr.edgeR.s = MEDIPS.selectSig(results = mr.edgeR, p.value = pval, adj = T, ratio = NULL, bg.counts = NULL, CNV = F)
 	cat("[INFO] mr.edgeR.s\n")
 
 	# FIXME !!! name change required

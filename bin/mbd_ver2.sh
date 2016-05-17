@@ -47,20 +47,20 @@ if [ $single_pair == "single" ]; then
 	trim_galore -o $result_dir $input_fastq1	
 
 	cd $result_dir
-	STAR --genomeDir $REF_HUMAN_DIR --readFilesIn $result_dir/$filename1_wo_ext"_trimmed.fq" --runThreadN $NUM_CPUS --alignIntronMax 1 --outFileNamePrefix $result_dir/$input_fq1_filename_only"." --alignEndsType EndToEnd --seedSearchStartLmax 20 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 # --outFilterMatchNmin 15 # --alignEndsType EndToEnd --seedSearchStartLmax 30 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 options are for increasing sensitivity for less than 50bp reads. MBDseq ICBP 36bp length 
+	STAR --genomeDir $REF_HUMAN_DIR --readFilesIn $result_dir/$filename1_wo_ext"_trimmed.fq" --runThreadN $SYS_NUM_CPUS --alignIntronMax 1 --outFileNamePrefix $result_dir/$input_fq1_filename_only"." --alignEndsType EndToEnd --seedSearchStartLmax 20 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 # --outFilterMatchNmin 15 # --alignEndsType EndToEnd --seedSearchStartLmax 30 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 options are for increasing sensitivity for less than 50bp reads. MBDseq ICBP 36bp length 
 	cd $WORK_DIR
 else
 	trim_galore --paired -o $result_dir $input_fastq1 $input_fastq2
 		
 	cd $result_dir
-	STAR --genomeDir $REF_HUMAN_DIR --readFilesIn $result_dir/$filename1_wo_ext"_val_1.fq" $result_dir/$filename2_wo_ext"_val_2.fq" --runThreadN $NUM_CPUS --alignIntronMax 1 --outFileNamePrefix $result_dir/$input_fq1_filename_only"." --alignEndsType EndToEnd --seedSearchStartLmax 20 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 # --outFilterMatchNmin 15 # --alignEndsType EndToEnd --seedSearchStartLmax 30 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 options are for increasing sensitivity for less than 50bp reads. MBDseq ICBP 36bp length 
+	STAR --genomeDir $REF_HUMAN_DIR --readFilesIn $result_dir/$filename1_wo_ext"_val_1.fq" $result_dir/$filename2_wo_ext"_val_2.fq" --runThreadN $SYS_NUM_CPUS --alignIntronMax 1 --outFileNamePrefix $result_dir/$input_fq1_filename_only"." --alignEndsType EndToEnd --seedSearchStartLmax 20 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 # --outFilterMatchNmin 15 # --alignEndsType EndToEnd --seedSearchStartLmax 30 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 options are for increasing sensitivity for less than 50bp reads. MBDseq ICBP 36bp length 
 	cd $WORK_DIR
 fi
 
 
 # covert sam to sorted bam
 echo "[INFO] Convert SAM to Sorted BAM"
-samtools view -ubS -@ $NUM_CPUS $result_dir/$input_fq1_filename_only".Aligned.out.sam" | samtools sort -@ $NUM_CPUS -m 3G - $result_dir/$input_fq1_filename_only".sorted"
+samtools view -ubS -@ $SYS_NUM_CPUS $result_dir/$input_fq1_filename_only".Aligned.out.sam" | samtools sort -@ $SYS_NUM_CPUS -m 3G - $result_dir/$input_fq1_filename_only".sorted"
 
 echo "[INFO] Index sorted BAM"
 samtools index $result_dir/$input_fq1_filename_only".sorted.bam"

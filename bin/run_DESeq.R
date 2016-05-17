@@ -16,6 +16,7 @@ option_list <- list(
     make_option(c("-o", "--deseq_result"), action="store"),
     make_option(c("-l", "--sample_num_list"), action="store"),
     make_option(c("-c", "--count_table"), action="store"),
+		make_option(c("--pval_cut"), action="store", default=0.05),
 		make_option(c("--output_prefix"), action="store")
     )
 
@@ -27,6 +28,7 @@ sample_list <- unlist(strsplit(opt$sample_list, ";"))
 sample_num_list <- unlist(strsplit(opt$sample_num_list, ";"))
 count_table_file <- opt$count_table
 final_result_file <- opt$deseq_result
+pval_cut <- as.numeric(opt$pval_cut)
 
 #output_prefix <- paste(unique(sample_num_list), collapse="_")
 output_prefix <- opt$output_prefix
@@ -136,3 +138,27 @@ result_fig <- paste(result_dir, "/",output_prefix,"_heatmap6.jpg", collapse = ""
 png(result_fig)
 plotDispEsts(dds)
 dev.off()
+
+
+resdata <- merge(as.data.frame(res), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
+names(resdata)[1] <- "Gene"
+
+#volcano plot
+volcanoplot <- function (res, lfcthresh=2, sigthresh=0.05, main="Volcano Plot", legendpos="bottomright", labelsig=TRUE, textcx=1, ...) {
+  with(res, plot(log2FoldChange, -log10(pvalue), pch=20, main=main, ...))
+  with(subset(res, padj<sigthresh ), points(log2FoldChange, -log10(pvalue), pch=20, col="red", ...))
+ # with(subset(res, abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="orange", ...))
+#  with(subset(res, padj<sigthresh & abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="green", ...))
+  if (labelsig) {
+    require(calibrate)
+    with(subset(res, padj<sigthresh & abs(log2FoldChange)>lfcthresh), textxy(log2FoldChange, -log10(pvalue), labs=Gene, cex=textcx, ...))
+  }
+#  legend(legendpos, xjust=1, yjust=1, legend=c(paste("FDR<",sigthresh,sep=""), paste("|LogFC|>",lfcthresh,sep=""), "both"), pch=20, col=c("red","orange","green"))
+}
+
+result_fig <- paste(result_dir, "/",output_prefix,".volcano.png", collapse = "", sep="")
+png(result_fig)
+volcanoplot(resdata, sigthresh=pval_cut, textcx=.8, labelsig=F)
+dev.off()
+
+

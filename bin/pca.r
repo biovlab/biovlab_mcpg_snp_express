@@ -16,7 +16,7 @@ data <-read.table(input, sep="\t", header=T)
 id_list <- data[,1]
 
 data <- data[,-1]
-rownames(data) <- id_list
+#rownames(data) <- id_list
 
 data <- t(data)
 

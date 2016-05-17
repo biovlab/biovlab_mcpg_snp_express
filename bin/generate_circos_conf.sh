@@ -9,6 +9,7 @@ gene_file=$4
 circos_config_loc=$5
 min=$6
 max=$7
+final_result_url=$8
 
 # circos parameters
 #min="0"
@@ -43,7 +44,30 @@ chromosomes_units = 1000000
 </link>
 </links>
 
-<<include $circos_config_loc/ideogram.conf>>
+#<<include $circos_config_loc/ideogram.conf>>
+<ideogram>
+
+<spacing>
+default = 0.005r
+</spacing>
+
+radius           = 0.90r
+thickness        = 20p
+fill             = yes
+stroke_color     = dgrey
+stroke_thickness = 2p
+
+show_label       = yes
+
+label_font       = default
+label_radius     = dims(image,radius) - 60p
+label_size       = 30
+label_parallel   = yes
+ideogram_url = $final_result_dir_inte/circos_[chr].html
+#ideogram_url = http://147.46.15.115/temp/circos.html
+
+</ideogram>
+
 <<include $circos_config_loc/ticks.conf>>
 
 <image>
