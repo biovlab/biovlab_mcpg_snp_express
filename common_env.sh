@@ -34,7 +34,7 @@ REF_HUMAN_PROMOTER="$WORK_DIR/lib/region_info/promoter_NM_only.bed.valid_chr.bed
 
 TEN_COLOR_CODE=('#fb8072' '#80b1d3' '#fdb462' '#b3de69' '#fccde5' '#bc80bd' '#8dd3c7' '#ffffb3' '#bebada' '#ccebc5')
 GENESYMBOL_GENEBODY_INFO="$WORK_DIR/ref_data/human/ucsc/region_info/GeneSymbol_genebody.bed"
-HALLMARK_GENE_SET_JASON="/data/project/MSG/lib/hallmark_genes_msigdb.json"
+HALLMARK_GENE_SET_JASON="$WORK_DIR/lib/hallmark_genes_msigdb.json"
 
 # MYSQL DB setting
 MYSQL_DB_NAME="msg"
@@ -71,3 +71,4 @@ P_VALUE_CUT=0.15
 # BioVLAB
 BIOVLAB_EMAIL=snu.biovlab@gmail.com
 export WEB_ACCESSIBLE_LOC="http://bhi2.snu.ac.kr:3000/"
+export CIRCOS_CONFIG_LOC="$WORK_DIR/lib/circos_confs/"
