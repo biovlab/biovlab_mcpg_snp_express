@@ -13,6 +13,9 @@ if [ $resource == "localhost" ]; then
 else
 	echo "[INFO] This is in cloud"
 	cp `dirname $0`/../../../env.sh `dirname $0`/../../
+	cd `dirname $0`/../../
+	git push
+	cd -
 fi
 	
 source `dirname $0`/../../env.sh
