@@ -31,6 +31,7 @@ if [ $resource == "localhost" ]; then
 	ln -s $final_result_root_dir $final_result_web_dir
 else # cloud
 	result_dir=$CLOUD_RESULT_DIR/$uid
+	final_result_root_dir=$result_dir/final_result
 fi
 
 mkdir -p $final_result_root_dir
