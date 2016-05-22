@@ -9,6 +9,9 @@ declare -A exp_info
 # MySQL query to extract all parameters by uid 
 uid=$1
 result_dir=$2
+resource=$3
+echo "[INFO] result_dir in parse : $result_dir"
+
 final_result_root_dir=$result_dir/final_result
 final_result_web_dir="/var/www/html/biovlab_mcpg_snp_express/"$uid
 final_result_url="bhi2.snu.ac.kr/biovlab_mcpg_snp_express/"$uid
@@ -23,9 +26,14 @@ mysql_host_port=$MYSQL_HOST_PORT
 echo "[INFO] PGA_UID:"$uid
 
 echo "[INFP] Create final result directory"
+if [ $resource == "localhost" ]; then
+	mkdir -p $final_result_web_dir
+	ln -s $final_result_root_dir $final_result_web_dir
+else # cloud
+	result_dir=$CLOUD_RESULT_DIR/$uid
+fi
+
 mkdir -p $final_result_root_dir
-mkdir -p $final_result_web_dir
-ln -s $final_result_root_dir $final_result_web_dir
 
 # variables
 field_name_list=()

@@ -36,6 +36,8 @@ TEN_COLOR_CODE=('#fb8072' '#80b1d3' '#fdb462' '#b3de69' '#fccde5' '#bc80bd' '#8d
 GENESYMBOL_GENEBODY_INFO="$WORK_DIR/ref_data/human/ucsc/region_info/GeneSymbol_genebody.bed"
 HALLMARK_GENE_SET_JASON="$WORK_DIR/lib/hallmark_genes_msigdb.json"
 
+CLOUD_RESULT_DIR="/home/airavata/biovlab_mcpg_snp_express/result"
+
 # MYSQL DB setting
 MYSQL_DB_NAME="msg"
 MSQL_USER_ID="airavata"
