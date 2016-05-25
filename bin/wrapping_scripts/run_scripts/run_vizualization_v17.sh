@@ -33,7 +33,7 @@ UCSC_hub_dir_name="UCSC_hub/"
 #UCSC_hub_result_dir="$final_result_dir_inte/$UCSC_hub_dir_name"
 UCSC_hub_result_dir=$final_result_dir_ge
 
-final_result_url="$WEB_ACCESSIBLE_LOC/images/$uid"
+final_result_url=$WEB_ACCESSIBLE_LOC"images/"$uid
 base_url_for_UCSC_hub="$final_result_url/gene_expression/"
 delimeter_for_UCSC_hub=";"
 
@@ -373,8 +373,8 @@ if [ "$me_data_type" -eq "0" ]; then # MBD
 			met_level_bw_file=$viz_result_dir/$temp_filename_only".met_level.bw";
 
 			# create bigWig file for UCSC
-			#awk 'NR==1{next;}{print}' $met_level_file | cut -f1,2,3,5 > $met_level_bed_file;
-			awk 'NR==1{next;}{print}' $met_level_file | cut -f1,2,3,5 | bedtools intersect -a - -b $REF_HUMAN_GENOME_100_BIN_BED -sorted > $met_level_bed_file;
+			awk 'NR==1{next;}{print}' $met_level_file | cut -f1,2,3,5 > $met_level_bed_file;
+	#		awk 'NR==1{next;}{print}' $met_level_file | cut -f1,2,3,5 | bedtools intersect -a - -b $REF_HUMAN_GENOME_100_BIN_BED -sorted > $met_level_bed_file;
 			$bin_dir/bedGraphToBigWig $met_level_bed_file $REF_HUMAN_CHR_SIZE $met_level_bw_file;
 
 			cp $met_level_bw_file $final_result_dir_me;
@@ -1703,10 +1703,20 @@ for((k=0; k<${#type_kind[@]}; k++)); do
 		# result file type config
 		result_file_type_list="bigBed;"`my_join ";" ${exp_type_list[@]}`";bigBed;"`my_join ";" ${methyl_type_list[@]}`";"`my_join ";" ${vcf_type_list[@]}`
 
+		# create track name array since just file name cause redandant issue in track name
+		first_class_exp_filename_mod=( "${first_class_exp_filename[@]/#/ge_}" )
+		second_class_exp_filename_mod=( "${second_class_exp_filename[@]/#/ge_}" )
+
+		first_class_methyl_filename_mod=( "${first_class_methyl_filename[@]/#/me_}" )
+		second_class_methyl_filename_mod=( "${second_class_methyl_filename[@]/#/me_}" )
+
+		first_class_vcf_filename_mod=( "${first_class_vcf_filename[@]/#/mu_}" )
+		second_class_vcf_filename_mod=( "${second_class_vcf_filename[@]/#/mu_}" )
+
 		# track name config
-		UCSC_track_name_ge_list=$work_file".DEG;"`my_join ";" ${first_class_exp_filename[@]}`";"`my_join ";" ${second_class_exp_filename[@]}`
-		UCSC_track_name_me_list=$work_file".DMR;"`my_join ";" ${first_class_methyl_filename[@]}`";"`my_join ";" ${second_class_methyl_filename[@]}`
-		UCSC_track_name_mu_list=`my_join ";" ${first_class_vcf_filename[@]}`";"`my_join ";" ${second_class_vcf_filename[@]}`
+		UCSC_track_name_ge_list=$work_file".DEG;"`my_join ";" ${first_class_exp_filename_mod[@]}`";"`my_join ";" ${second_class_exp_filename_mod[@]}`
+		UCSC_track_name_me_list=$work_file".DMR;"`my_join ";" ${first_class_methyl_filename_mod[@]}`";"`my_join ";" ${second_class_methyl_filename_mod[@]}`
+		UCSC_track_name_mu_list=`my_join ";" ${first_class_vcf_filename_mod[@]}`";"`my_join ";" ${second_class_vcf_filename_mod[@]}`
 		UCSC_track_name_list=$UCSC_track_name_ge_list";"$UCSC_track_name_me_list";"$UCSC_track_name_mu_list
 
 		bash $bin_dir/create_UCSC_hub.sh $UCSC_result_file_list_with_path $result_file_type_list $UCSC_track_name_list $UCSC_hub_result_dir $GENOME_VERSION $delimeter_for_UCSC_hub $base_url_for_UCSC_hub $work_file > $UCSC_hub_result_dir/$work_file".UCSC_hub_link.txt"
