@@ -201,7 +201,7 @@ type_len=($(echo ${ge_type_list[@]} | tr ' ' '\n' | sort | uniq -c | awk '{print
 #TYPE_LEN=(13 7 10)
 
 # multiple correciton
-multiple_correction="fdr" #'bonferroni', 'fdr', 'holm' and so on. see R stats.p.adjust
+multiple_correction="fdr_bh" #'b', 'fdr_bh', 'hs' and so on. see statsmodels.stats.multitest.multipletests
 
 # pearson or spearman
 pear_sp_cor=0 # 0 : pearson / 1: spearman
@@ -624,11 +624,11 @@ COMMENT
 	# BY kruscal & and bonferroni
 	###########################################
 
-		python $bin_dir/kruskal_ver4.py $integ_result_dir/ME_MAT.txt `my_join "," ${type_len[@]}` $kw_threshold $NUM_CPUS $integ_result_dir/ME_MAT.kw.txt $multiple_correction
+		python $bin_dir/kruskal_ver4_wo_rpy.py $integ_result_dir/ME_MAT.txt `my_join "," ${type_len[@]}` $kw_threshold $NUM_CPUS $integ_result_dir/ME_MAT.kw.txt $multiple_correction
 
 #-a 0.05 -n $NUM_CPUS -c `my_join "," ${type_list[@]}` -m 0 --o1 $integ_result_dir/ME_MAT.kw.sigle_diff --o2 $integ_result_dir/ME_MAT.kw.all_diff
 
-		python $bin_dir/kruskal_ver4.py $integ_result_dir/GE_MAT.txt `my_join "," ${type_len[@]}` $kw_threshold $NUM_CPUS $integ_result_dir/GE_MAT.kw.txt $multiple_correction
+		python $bin_dir/kruskal_ver4_wo_rpy.py $integ_result_dir/GE_MAT.txt `my_join "," ${type_len[@]}` $kw_threshold $NUM_CPUS $integ_result_dir/GE_MAT.kw.txt $multiple_correction
 
 #-a 0.05 -n $NUM_CPUS -c `my_join "," ${type_list[@]}` -m 0 --o1 $integ_result_dir/GE_MAT.kw.sigle_diff --o2 $integ_result_dir/GE_MAT.kw.all_diff
 		
@@ -1075,7 +1075,7 @@ cut -f1-3 $candidate_degs_non_deg_tf_info | uniq > $tfbs_pos_file
 
 
 # calculate DM-Promoter
-  python $bin_dir/kruskal_ver4_noheader.py $tfbs_avg_methyl_GE_COR_cut `my_join "," ${type_len[@]}` $kw_threshold $NUM_CPUS $tfbs_avg_methyl_GE_COR_cut".kw.txt" $multiple_correction
+  python $bin_dir/kruskal_ver4_wo_rpy_noheader.py $tfbs_avg_methyl_GE_COR_cut `my_join "," ${type_len[@]}` $kw_threshold $NUM_CPUS $tfbs_avg_methyl_GE_COR_cut".kw.txt" $multiple_correction
 
 # cut DM-Promoter
  awk -v kw_threshold=$kw_threshold 'BEGIN{FS=OFS="\t"}{if(($(NF) < kw_threshold) && ($(NF) != "nan")){split($1, tokens, "_"); print tokens[1]"\t"tokens[2],$0}}' $tfbs_avg_methyl_GE_COR_cut".kw.txt" > $integ_result_dir/TFBS_DEG_DMR 
