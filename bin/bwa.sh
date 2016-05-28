@@ -6,6 +6,7 @@ input_fastq2=$2
 single_pair=$3
 result_dir=$4
 output_name=$5
+num_cpus=$6
 
 # variables
 input_dir=`dirname $input_fastq1`
@@ -26,12 +27,12 @@ echo "[INFO] Align DNAseq using bwa"
 if [ $single_pair == "single" ]; then
 	trim_galore -o $result_dir $input_fastq1	
 
-	bwa mem -t 4 $REF_HUMAN $result_dir/$filename1_wo_ext"_trimmed.fq" > $output_name
+	bwa mem -t $num_cpus $REF_HUMAN $result_dir/$filename1_wo_ext"_trimmed.fq" > $output_name
 
 else
 	trim_galore --paired -o $result_dir $input_fastq1 $input_fastq2
 	
-	bwa mem -t 4 $REF_HUMAN $result_dir/$filename1_wo_ext"_val_1.fq" $result_dir/$filename2_wo_ext"_val_2.fq" > $output_name	
+	bwa mem -t $num_cpus $REF_HUMAN $result_dir/$filename1_wo_ext"_val_1.fq" $result_dir/$filename2_wo_ext"_val_2.fq" > $output_name	
 fi
 
 <<'COMMENT'

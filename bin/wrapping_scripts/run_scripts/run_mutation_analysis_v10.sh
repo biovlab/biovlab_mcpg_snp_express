@@ -308,17 +308,17 @@ elif [ "$data_type" -eq "0" ] ; then
 	mkdir -p $dnaseq_result_dir
 	echo "[INFO] Start DNAseq analysis"
 	
-	count=0
+	#count=0
 	for (( i=0; i<${#sample_fq1_list[@]}; i++ )); do
 		sample_fq1_filename_only=`basename \${sample_fq1_list[\$i]}`
 		output_prefix=`basename $sample_fq1_filename_only "."$file_extension`"_"
 		
 		output_sam=$dnaseq_result_dir"/"$output_prefix"Aligned.out.sam"
 	
-		bash $bin_dir/bwa.sh ${sample_fq1_list[$i]} ${sample_fq2_list[$i]} $single_pair $dnaseq_result_dir $output_sam &
+		bash $bin_dir/bwa.sh ${sample_fq1_list[$i]} ${sample_fq2_list[$i]} $single_pair $dnaseq_result_dir $output_sam $NUM_CPUS
 	
-		let count+=1
-		[[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
+		#let count+=1
+		#[[ $((count%$NUM_CPUS)) -eq 0 ]] && wait
 	done; wait
 	
 	mut_mapping_dir=$dnaseq_result_dir
