@@ -328,15 +328,15 @@ fi
 # Genearate VCF from mapping results
 ########################
 num_cpus_for_gatk=$NUM_CPUS
-#mem_for_gatk_float=$(( $SYS_MAX_MEM / $num_cpus_for_gatk ))
-#mem_for_gatk=${mem_for_gatk_float%.*}
+mem_for_gatk_float=$(( $SYS_MAX_MEM / $num_cpus_for_gatk ))
+mem_for_gatk=${mem_for_gatk_float%.*}
 count=0
 #echo "[INFO] mem_for_gatk="$mem_for_gatk
-mem_for_gatk="4"
+#mem_for_gatk="4"
 
 # temporary test
-num_cpus_for_gatk=6
-mem_for_gatk="10"
+#num_cpus_for_gatk=6
+#mem_for_gatk="10"
 
 if [ "$data_type" -eq "0" ] || [ "$data_type" -eq "1" ] ; then	
 
