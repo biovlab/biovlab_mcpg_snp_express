@@ -588,8 +588,8 @@ for (( i=0; i<${#type_kind[@]}; i++ )); do
 #	awk -v sample_num_in_class=$temp_sample_num_in_class 'NR==1{print "#chr","start","end","avg_value";next;}{avg_value=0; for (i=1+3; i<=sample_num_in_class+3; i++){avg_value+=$i;}; avg_value=avg_value/sample_num_in_class; print $1,$2,$3,avg_value;}' OFS='\t' $subtype_ME_merged_file > $subtype_ME_merged_avg_file
 
 	# merge value the range in 10Mb for circos input
-	bedtools map -header -c 4 -o mean -a $REF_HUMAN_GENOME_10M_BIN_BED -b $subtype_ME_merged_avg_file | sed -e 's/chr/hs/g' | sed -e 's/\t\./\t0/g' > $subtype_ME_merged_avg_10Mb_file
-	bedtools map -header -c 4 -o mean -a $REF_HUMAN_GENOME_1M_BIN_BED -b $subtype_ME_merged_avg_file | sed -e 's/chr/hs/g' | sed -e 's/\t\./\t0/g' > $subtype_ME_merged_avg_1Mb_file
+	bedtools map -header -c 4 -o mean -a $REF_HUMAN_GENOME_10M_BIN_BED -b <(bedtools sort -header -i $subtype_ME_merged_avg_file) | sed -e 's/chr/hs/g' | sed -e 's/\t\./\t0/g' > $subtype_ME_merged_avg_10Mb_file
+	bedtools map -header -c 4 -o mean -a $REF_HUMAN_GENOME_1M_BIN_BED -b <(bedtools sort -header -i $subtype_ME_merged_avg_file) | sed -e 's/chr/hs/g' | sed -e 's/\t\./\t0/g' > $subtype_ME_merged_avg_1Mb_file
 done
 
 
